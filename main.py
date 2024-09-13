@@ -1,8 +1,8 @@
 import pyarrow as pa
 from datafusion import SessionContext
-from parser.lexer import lexer
-from parser.parser import parser
-from evaluator import ast_to_datafusion_expr  # Import the evaluator
+from core.lexer import lexer
+from core.parser import parser
+from eval.evaluator import ast_to_datafusion_expr  # Import the evaluator
 
 def run_lexer(input_string):
     """ Lex the input string and return the tokens. """
@@ -20,16 +20,29 @@ def run_parser(input_string):
     result = parser.parse(input_string)
     return result
 
-def execute_datafusion_expr(expr, csv_path):
+def execute_datafusion_expr(expr_and_aggregate_flag, csv_path):
     """ Execute a DataFusion expression on a CSV file and return the result. """
+    expr, is_aggregate = expr_and_aggregate_flag
     ctx = SessionContext()
 
     # Register the CSV file as a table
     ctx.register_csv("table", csv_path)
-    
+
     # Build the query with the DataFusion expression
-    df_result = ctx.table("table").select(expr)
-    
-    # Collect the result
-    result = df_result.collect()
-    return result
+    df = ctx.table("table")
+
+    if is_aggregate:
+        # Use aggregate method
+        df_result = df.aggregate([], [expr])
+    else:
+        # Use select method
+        df_result = df.select(expr)
+
+    # Collect the result and catch errors
+    try:
+        result = df_result.collect()
+        print("DataFusion Result:", result)
+        return result
+    except Exception as e:
+        print(f"DataFusion Execution Failed: {e}")
+        raise

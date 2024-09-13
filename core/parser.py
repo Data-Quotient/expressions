@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from parser.lexer import tokens
+from core.lexer import tokens
 
 # Precedence rules for arithmetic operations
 precedence = (
@@ -40,14 +40,21 @@ def p_expression_number(p):
 # Function handling (e.g., IF, SUM, ADD, SUBTRACT)
 def p_expression_function(p):
     '''expression : IF LPAREN expression COMMA expression COMMA expression RPAREN
+                  | SUM LPAREN expression RPAREN
                   | SUM LPAREN expression COMMA expression RPAREN
                   | SUBTRACT LPAREN expression COMMA expression RPAREN
                   | ADD LPAREN expression COMMA expression RPAREN
                   | MULTIPLY LPAREN expression COMMA expression RPAREN
                   | DIVIDE LPAREN expression COMMA expression RPAREN'''
+    
     if p[1] == 'IF':
         p[0] = ('if', p[3], p[5], p[7])
-    elif p[1] in ['SUM', 'SUBTRACT', 'ADD', 'MULTIPLY', 'DIVIDE']:
+    elif p[1] == 'SUM':
+        if len(p) == 5:  # Handling SUM with one argument
+            p[0] = ('sum', p[3])
+        else:  # Handling SUM with two arguments
+            p[0] = ('sum', p[3], p[5])
+    elif p[1] in ['SUBTRACT', 'ADD', 'MULTIPLY', 'DIVIDE']:
         p[0] = (p[1].lower(), p[3], p[5])
 
 # Error handling rule
