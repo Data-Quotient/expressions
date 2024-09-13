@@ -1,4 +1,7 @@
+# eval/evaluator.py
+
 from datafusion import functions as f, col, literal
+from functools import reduce
 
 # Function registry mapping function names to (function, is_aggregate) tuples
 FUNCTION_REGISTRY = {
@@ -7,7 +10,11 @@ FUNCTION_REGISTRY = {
     'add': (lambda args: (args[0] + args[1]).alias('add'), False),
     'multiply': (lambda args: (args[0] * args[1]).alias('multiply'), False),
     'divide': (lambda args: (args[0] / args[1]).alias('divide'), False),
-    'if': (lambda args: f.case().when(args[0], args[1]).otherwise(args[2]).alias('if'), False),
+    'if': (lambda args: f.when(args[0], args[1]).otherwise(args[2]).alias('if'), False),
+    'and': (lambda args: reduce(lambda x, y: x & y, args).alias('and'), False),
+    'gt': (lambda args: (args[0] > args[1]), False),
+    'lt': (lambda args: (args[0] < args[1]), False),
+    # Add other functions as needed
 }
 
 def ast_to_datafusion_expr(ast):
@@ -18,6 +25,9 @@ def ast_to_datafusion_expr(ast):
     """
     if isinstance(ast, int):
         return literal(ast), False  # Literal number is not an aggregate
+
+    if isinstance(ast, str):
+        return literal(ast), False  # Literal string is not an aggregate
 
     node_type = ast[0]
 
@@ -30,7 +40,7 @@ def ast_to_datafusion_expr(ast):
         # Recursively resolve the arguments to handle nested functions
         args = []
         is_aggregate = False
-        for arg in ast[1:]:
+        for arg in ast[1]:
             expr, agg = ast_to_datafusion_expr(arg)
             args.append(expr)
             if agg:

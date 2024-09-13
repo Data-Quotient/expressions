@@ -1,11 +1,12 @@
+# main.py
+
 import pyarrow as pa
 from datafusion import SessionContext
 from core.lexer import lexer
 from core.parser import parser
-from eval.evaluator import ast_to_datafusion_expr  # Import the evaluator
 
 def run_lexer(input_string):
-    """ Lex the input string and return the tokens. """
+    """Lex the input string and return the tokens."""
     lexer.input(input_string)
     tokens = []
     while True:
@@ -16,12 +17,12 @@ def run_lexer(input_string):
     return tokens
 
 def run_parser(input_string):
-    """ Parse the input string and return the AST. """
+    """Parse the input string and return the AST."""
     result = parser.parse(input_string)
     return result
 
 def execute_datafusion_expr(expr_and_aggregate_flag, csv_path):
-    """ Execute a DataFusion expression on a CSV file and return the result. """
+    """Execute a DataFusion expression on a CSV file and return the result."""
     expr, is_aggregate = expr_and_aggregate_flag
     ctx = SessionContext()
 

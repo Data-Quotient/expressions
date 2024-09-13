@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDEnonassocGTLTEQADD COLUMN COMMA DIVIDE DIVIDE EQ GT IF LPAREN LT MINUS MULTIPLY NUMBER PLUS RPAREN STRING SUBTRACT SUM TIMESexpression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expression\n                  | expression GT expression\n                  | expression LT expression\n                  | expression EQ expressionexpression : LPAREN expression RPARENexpression : COLUMN\n                  | STRINGexpression : NUMBERexpression : IF LPAREN expression COMMA expression COMMA expression RPAREN\n                  | SUM LPAREN expression RPAREN\n                  | SUM LPAREN expression COMMA expression RPAREN\n                  | SUBTRACT LPAREN expression COMMA expression RPAREN\n                  | ADD LPAREN expression COMMA expression RPAREN\n                  | MULTIPLY LPAREN expression COMMA expression RPAREN\n                  | DIVIDE LPAREN expression COMMA expression RPAREN'
+_lr_signature = 'leftANDleftORnonassocGREATER_THANLESS_THANEQleftPLUSMINUSleftTIMESSLASHADD AND COLUMN COMMA DIVIDE EQ GREATER_THAN GT IF LESS_THAN LPAREN LT MINUS MULTIPLY NUMBER OR PLUS RPAREN SLASH STRING SUBTRACT SUM TIMESexpression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression SLASH expression\n                  | expression GREATER_THAN expression\n                  | expression LESS_THAN expression\n                  | expression EQ expressionexpression : LPAREN expression RPARENexpression : COLUMN\n                  | STRINGexpression : NUMBERexpression : FUNCTION_NAME LPAREN arg_list RPARENFUNCTION_NAME : IF\n                     | SUM\n                     | SUBTRACT\n                     | ADD\n                     | MULTIPLY\n                     | DIVIDE\n                     | AND\n                     | OR\n                     | GT\n                     | LTarg_list : expression\n                | arg_list COMMA expression'
     
-_lr_action_items = {'LPAREN':([0,2,3,7,8,9,10,11,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[3,19,3,21,22,23,24,25,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,]),'COLUMN':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,]),'STRING':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,]),'NUMBER':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,]),'IF':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,]),'SUM':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,]),'SUBTRACT':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,]),'ADD':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,]),'MULTIPLY':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,]),'DIVIDE':([0,1,3,4,5,6,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,],[2,15,2,-9,-10,-11,2,2,2,2,2,2,2,2,15,2,2,2,2,2,15,15,-3,-4,-5,-6,-7,15,-8,15,15,15,15,15,2,2,-13,2,2,2,2,15,15,15,15,15,15,-18,2,-14,-15,-16,-17,15,-12,]),'$end':([1,4,5,6,26,27,28,29,30,31,32,34,42,53,55,56,57,58,60,],[0,-9,-10,-11,-1,-2,-3,-4,-5,-6,-7,-8,-13,-18,-14,-15,-16,-17,-12,]),'PLUS':([1,4,5,6,20,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,47,48,49,50,51,52,53,55,56,57,58,59,60,],[12,-9,-10,-11,12,-1,-2,-3,-4,-5,-6,-7,12,-8,12,12,12,12,12,-13,12,12,12,12,12,12,-18,-14,-15,-16,-17,12,-12,]),'MINUS':([1,4,5,6,20,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,47,48,49,50,51,52,53,55,56,57,58,59,60,],[13,-9,-10,-11,13,-1,-2,-3,-4,-5,-6,-7,13,-8,13,13,13,13,13,-13,13,13,13,13,13,13,-18,-14,-15,-16,-17,13,-12,]),'TIMES':([1,4,5,6,20,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,47,48,49,50,51,52,53,55,56,57,58,59,60,],[14,-9,-10,-11,14,14,14,-3,-4,-5,-6,-7,14,-8,14,14,14,14,14,-13,14,14,14,14,14,14,-18,-14,-15,-16,-17,14,-12,]),'GT':([1,4,5,6,20,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,47,48,49,50,51,52,53,55,56,57,58,59,60,],[16,-9,-10,-11,16,16,16,16,16,None,None,None,16,-8,16,16,16,16,16,-13,16,16,16,16,16,16,-18,-14,-15,-16,-17,16,-12,]),'LT':([1,4,5,6,20,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,47,48,49,50,51,52,53,55,56,57,58,59,60,],[17,-9,-10,-11,17,17,17,17,17,None,None,None,17,-8,17,17,17,17,17,-13,17,17,17,17,17,17,-18,-14,-15,-16,-17,17,-12,]),'EQ':([1,4,5,6,20,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,47,48,49,50,51,52,53,55,56,57,58,59,60,],[18,-9,-10,-11,18,18,18,18,18,None,None,None,18,-8,18,18,18,18,18,-13,18,18,18,18,18,18,-18,-14,-15,-16,-17,18,-12,]),'RPAREN':([4,5,6,20,26,27,28,29,30,31,32,34,36,42,47,49,50,51,52,53,55,56,57,58,59,60,],[-9,-10,-11,34,-1,-2,-3,-4,-5,-6,-7,-8,42,-13,53,55,56,57,58,-18,-14,-15,-16,-17,60,-12,]),'COMMA':([4,5,6,26,27,28,29,30,31,32,33,34,35,36,37,38,39,42,48,53,55,56,57,58,60,],[-9,-10,-11,-1,-2,-3,-4,-5,-6,-7,40,-8,41,43,44,45,46,-13,54,-18,-14,-15,-16,-17,-12,]),}
+_lr_action_items = {'LPAREN':([0,2,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,25,37,],[2,2,25,-13,-14,-15,-16,-17,-18,-19,-20,-21,-22,2,2,2,2,2,2,2,2,2,]),'COLUMN':([0,2,17,18,19,20,21,22,23,25,37,],[3,3,3,3,3,3,3,3,3,3,3,]),'STRING':([0,2,17,18,19,20,21,22,23,25,37,],[4,4,4,4,4,4,4,4,4,4,4,]),'NUMBER':([0,2,17,18,19,20,21,22,23,25,37,],[5,5,5,5,5,5,5,5,5,5,5,]),'IF':([0,2,17,18,19,20,21,22,23,25,37,],[7,7,7,7,7,7,7,7,7,7,7,]),'SUM':([0,2,17,18,19,20,21,22,23,25,37,],[8,8,8,8,8,8,8,8,8,8,8,]),'SUBTRACT':([0,2,17,18,19,20,21,22,23,25,37,],[9,9,9,9,9,9,9,9,9,9,9,]),'ADD':([0,2,17,18,19,20,21,22,23,25,37,],[10,10,10,10,10,10,10,10,10,10,10,]),'MULTIPLY':([0,2,17,18,19,20,21,22,23,25,37,],[11,11,11,11,11,11,11,11,11,11,11,]),'DIVIDE':([0,2,17,18,19,20,21,22,23,25,37,],[12,12,12,12,12,12,12,12,12,12,12,]),'AND':([0,2,17,18,19,20,21,22,23,25,37,],[13,13,13,13,13,13,13,13,13,13,13,]),'OR':([0,2,17,18,19,20,21,22,23,25,37,],[14,14,14,14,14,14,14,14,14,14,14,]),'GT':([0,2,17,18,19,20,21,22,23,25,37,],[15,15,15,15,15,15,15,15,15,15,15,]),'LT':([0,2,17,18,19,20,21,22,23,25,37,],[16,16,16,16,16,16,16,16,16,16,16,]),'$end':([1,3,4,5,26,27,28,29,30,31,32,33,36,],[0,-9,-10,-11,-1,-2,-3,-4,-5,-6,-7,-8,-12,]),'PLUS':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[17,-9,-10,-11,17,-1,-2,-3,-4,17,17,17,-8,17,-12,17,]),'MINUS':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[18,-9,-10,-11,18,-1,-2,-3,-4,18,18,18,-8,18,-12,18,]),'TIMES':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[19,-9,-10,-11,19,19,19,-3,-4,19,19,19,-8,19,-12,19,]),'SLASH':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[20,-9,-10,-11,20,20,20,-3,-4,20,20,20,-8,20,-12,20,]),'GREATER_THAN':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[21,-9,-10,-11,21,-1,-2,-3,-4,None,None,None,-8,21,-12,21,]),'LESS_THAN':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[22,-9,-10,-11,22,-1,-2,-3,-4,None,None,None,-8,22,-12,22,]),'EQ':([1,3,4,5,24,26,27,28,29,30,31,32,33,35,36,38,],[23,-9,-10,-11,23,-1,-2,-3,-4,None,None,None,-8,23,-12,23,]),'RPAREN':([3,4,5,24,26,27,28,29,30,31,32,33,34,35,36,38,],[-9,-10,-11,33,-1,-2,-3,-4,-5,-6,-7,-8,36,-23,-12,-24,]),'COMMA':([3,4,5,26,27,28,29,30,31,32,33,34,35,36,38,],[-9,-10,-11,-1,-2,-3,-4,-5,-6,-7,-8,37,-23,-12,-24,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'expression':([0,3,12,13,14,15,16,17,18,19,21,22,23,24,25,40,41,43,44,45,46,54,],[1,20,26,27,28,29,30,31,32,33,35,36,37,38,39,47,48,49,50,51,52,59,]),}
+_lr_goto_items = {'expression':([0,2,17,18,19,20,21,22,23,25,37,],[1,24,26,27,28,29,30,31,32,35,38,]),'FUNCTION_NAME':([0,2,17,18,19,20,21,22,23,25,37,],[6,6,6,6,6,6,6,6,6,6,6,]),'arg_list':([25,],[34,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,22 +27,28 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> expression","S'",1,None,None,None),
-  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','parser.py',15),
-  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','parser.py',16),
-  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','parser.py',17),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','parser.py',18),
-  ('expression -> expression GT expression','expression',3,'p_expression_binop','parser.py',19),
-  ('expression -> expression LT expression','expression',3,'p_expression_binop','parser.py',20),
-  ('expression -> expression EQ expression','expression',3,'p_expression_binop','parser.py',21),
-  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','parser.py',26),
-  ('expression -> COLUMN','expression',1,'p_expression_column','parser.py',31),
-  ('expression -> STRING','expression',1,'p_expression_column','parser.py',32),
-  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',37),
-  ('expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN','expression',8,'p_expression_function','parser.py',42),
-  ('expression -> SUM LPAREN expression RPAREN','expression',4,'p_expression_function','parser.py',43),
-  ('expression -> SUM LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_function','parser.py',44),
-  ('expression -> SUBTRACT LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_function','parser.py',45),
-  ('expression -> ADD LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_function','parser.py',46),
-  ('expression -> MULTIPLY LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_function','parser.py',47),
-  ('expression -> DIVIDE LPAREN expression COMMA expression RPAREN','expression',6,'p_expression_function','parser.py',48),
+  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','parser.py',18),
+  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','parser.py',19),
+  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','parser.py',20),
+  ('expression -> expression SLASH expression','expression',3,'p_expression_binop','parser.py',21),
+  ('expression -> expression GREATER_THAN expression','expression',3,'p_expression_binop','parser.py',22),
+  ('expression -> expression LESS_THAN expression','expression',3,'p_expression_binop','parser.py',23),
+  ('expression -> expression EQ expression','expression',3,'p_expression_binop','parser.py',24),
+  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','parser.py',30),
+  ('expression -> COLUMN','expression',1,'p_expression_column','parser.py',35),
+  ('expression -> STRING','expression',1,'p_expression_column','parser.py',36),
+  ('expression -> NUMBER','expression',1,'p_expression_number','parser.py',41),
+  ('expression -> FUNCTION_NAME LPAREN arg_list RPAREN','expression',4,'p_expression_function','parser.py',46),
+  ('FUNCTION_NAME -> IF','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',50),
+  ('FUNCTION_NAME -> SUM','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',51),
+  ('FUNCTION_NAME -> SUBTRACT','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',52),
+  ('FUNCTION_NAME -> ADD','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',53),
+  ('FUNCTION_NAME -> MULTIPLY','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',54),
+  ('FUNCTION_NAME -> DIVIDE','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',55),
+  ('FUNCTION_NAME -> AND','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',56),
+  ('FUNCTION_NAME -> OR','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',57),
+  ('FUNCTION_NAME -> GT','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',58),
+  ('FUNCTION_NAME -> LT','FUNCTION_NAME',1,'p_FUNCTION_NAME','parser.py',59),
+  ('arg_list -> expression','arg_list',1,'p_arg_list','parser.py',63),
+  ('arg_list -> arg_list COMMA expression','arg_list',3,'p_arg_list','parser.py',64),
 ]

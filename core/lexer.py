@@ -1,35 +1,42 @@
+# core/lexer.py
+
 import ply.lex as lex
 
-# Define reserved words like IF, SUM, SUBTRACT, etc.
+# Define reserved words
 reserved = {
     'IF': 'IF',
     'SUM': 'SUM',
     'SUBTRACT': 'SUBTRACT',
     'ADD': 'ADD',
     'MULTIPLY': 'MULTIPLY',
-    'DIVIDE': 'DIVIDE'
+    'DIVIDE': 'DIVIDE',
+    'AND': 'AND',
+    'OR': 'OR',
+    'GT': 'GT',
+    'LT': 'LT',
+    # Add other function names as needed
 }
 
 # Define the list of token names
 tokens = (
-    'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'DIVIDE', 
-    'LPAREN', 'RPAREN', 'COLUMN', 'GT', 'LT', 'EQ',
-    'COMMA', 'STRING'
-) + tuple(reserved.values())  # Include reserved words
+    'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'SLASH',
+    'LPAREN', 'RPAREN', 'COLUMN', 'GREATER_THAN', 'LESS_THAN', 'EQ',
+    'COMMA', 'STRING',
+) + tuple(reserved.values()) 
 
 # Define simple tokens
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
-t_DIVIDE = r'/'
+t_SLASH = r'/'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
-t_GT = r'>'
-t_LT = r'<'
+t_GREATER_THAN = r'>'
+t_LESS_THAN = r'<'
 t_EQ = r'=='
 t_COMMA = r','
 
-# Handle column names (e.g., A, B, C1, etc.)
+# Handle column names and reserved words
 def t_COLUMN(t):
     r'[A-Za-z_][A-Za-z0-9_]*'
     t.type = reserved.get(t.value.upper(), 'COLUMN')  # Check for reserved words

@@ -6,47 +6,60 @@ Rule 0     S' -> expression
 Rule 1     expression -> expression PLUS expression
 Rule 2     expression -> expression MINUS expression
 Rule 3     expression -> expression TIMES expression
-Rule 4     expression -> expression DIVIDE expression
-Rule 5     expression -> expression GT expression
-Rule 6     expression -> expression LT expression
+Rule 4     expression -> expression SLASH expression
+Rule 5     expression -> expression GREATER_THAN expression
+Rule 6     expression -> expression LESS_THAN expression
 Rule 7     expression -> expression EQ expression
 Rule 8     expression -> LPAREN expression RPAREN
 Rule 9     expression -> COLUMN
 Rule 10    expression -> STRING
 Rule 11    expression -> NUMBER
-Rule 12    expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN
-Rule 13    expression -> SUM LPAREN expression RPAREN
-Rule 14    expression -> SUM LPAREN expression COMMA expression RPAREN
-Rule 15    expression -> SUBTRACT LPAREN expression COMMA expression RPAREN
-Rule 16    expression -> ADD LPAREN expression COMMA expression RPAREN
-Rule 17    expression -> MULTIPLY LPAREN expression COMMA expression RPAREN
-Rule 18    expression -> DIVIDE LPAREN expression COMMA expression RPAREN
+Rule 12    expression -> FUNCTION_NAME LPAREN arg_list RPAREN
+Rule 13    FUNCTION_NAME -> IF
+Rule 14    FUNCTION_NAME -> SUM
+Rule 15    FUNCTION_NAME -> SUBTRACT
+Rule 16    FUNCTION_NAME -> ADD
+Rule 17    FUNCTION_NAME -> MULTIPLY
+Rule 18    FUNCTION_NAME -> DIVIDE
+Rule 19    FUNCTION_NAME -> AND
+Rule 20    FUNCTION_NAME -> OR
+Rule 21    FUNCTION_NAME -> GT
+Rule 22    FUNCTION_NAME -> LT
+Rule 23    arg_list -> expression
+Rule 24    arg_list -> arg_list COMMA expression
 
 Terminals, with rules where they appear
 
 ADD                  : 16
+AND                  : 19
 COLUMN               : 9
-COMMA                : 12 12 14 15 16 17 18
-DIVIDE               : 4 18
+COMMA                : 24
+DIVIDE               : 18
 EQ                   : 7
-GT                   : 5
-IF                   : 12
-LPAREN               : 8 12 13 14 15 16 17 18
-LT                   : 6
+GREATER_THAN         : 5
+GT                   : 21
+IF                   : 13
+LESS_THAN            : 6
+LPAREN               : 8 12
+LT                   : 22
 MINUS                : 2
 MULTIPLY             : 17
 NUMBER               : 11
+OR                   : 20
 PLUS                 : 1
-RPAREN               : 8 12 13 14 15 16 17 18
+RPAREN               : 8 12
+SLASH                : 4
 STRING               : 10
 SUBTRACT             : 15
-SUM                  : 13 14
+SUM                  : 14
 TIMES                : 3
 error                : 
 
 Nonterminals, with rules where they appear
 
-expression           : 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 12 12 12 13 14 14 15 15 16 16 17 17 18 18 0
+FUNCTION_NAME        : 12
+arg_list             : 12 24
+expression           : 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 23 24 0
 
 Parsing method: LALR
 
@@ -56,34 +69,43 @@ state 0
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 1
+    FUNCTION_NAME                  shift and go to state 6
 
 state 1
 
@@ -91,622 +113,564 @@ state 1
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
+    GREATER_THAN    shift and go to state 21
+    LESS_THAN       shift and go to state 22
+    EQ              shift and go to state 23
 
 
 state 2
-
-    (18) expression -> DIVIDE . LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 19
-
-
-state 3
 
     (8) expression -> LPAREN . expression RPAREN
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
-    expression                     shift and go to state 20
+    expression                     shift and go to state 24
+    FUNCTION_NAME                  shift and go to state 6
 
-state 4
+state 3
 
     (9) expression -> COLUMN .
 
     PLUS            reduce using rule 9 (expression -> COLUMN .)
     MINUS           reduce using rule 9 (expression -> COLUMN .)
     TIMES           reduce using rule 9 (expression -> COLUMN .)
-    DIVIDE          reduce using rule 9 (expression -> COLUMN .)
-    GT              reduce using rule 9 (expression -> COLUMN .)
-    LT              reduce using rule 9 (expression -> COLUMN .)
+    SLASH           reduce using rule 9 (expression -> COLUMN .)
+    GREATER_THAN    reduce using rule 9 (expression -> COLUMN .)
+    LESS_THAN       reduce using rule 9 (expression -> COLUMN .)
     EQ              reduce using rule 9 (expression -> COLUMN .)
     $end            reduce using rule 9 (expression -> COLUMN .)
     RPAREN          reduce using rule 9 (expression -> COLUMN .)
     COMMA           reduce using rule 9 (expression -> COLUMN .)
 
 
-state 5
+state 4
 
     (10) expression -> STRING .
 
     PLUS            reduce using rule 10 (expression -> STRING .)
     MINUS           reduce using rule 10 (expression -> STRING .)
     TIMES           reduce using rule 10 (expression -> STRING .)
-    DIVIDE          reduce using rule 10 (expression -> STRING .)
-    GT              reduce using rule 10 (expression -> STRING .)
-    LT              reduce using rule 10 (expression -> STRING .)
+    SLASH           reduce using rule 10 (expression -> STRING .)
+    GREATER_THAN    reduce using rule 10 (expression -> STRING .)
+    LESS_THAN       reduce using rule 10 (expression -> STRING .)
     EQ              reduce using rule 10 (expression -> STRING .)
     $end            reduce using rule 10 (expression -> STRING .)
     RPAREN          reduce using rule 10 (expression -> STRING .)
     COMMA           reduce using rule 10 (expression -> STRING .)
 
 
-state 6
+state 5
 
     (11) expression -> NUMBER .
 
     PLUS            reduce using rule 11 (expression -> NUMBER .)
     MINUS           reduce using rule 11 (expression -> NUMBER .)
     TIMES           reduce using rule 11 (expression -> NUMBER .)
-    DIVIDE          reduce using rule 11 (expression -> NUMBER .)
-    GT              reduce using rule 11 (expression -> NUMBER .)
-    LT              reduce using rule 11 (expression -> NUMBER .)
+    SLASH           reduce using rule 11 (expression -> NUMBER .)
+    GREATER_THAN    reduce using rule 11 (expression -> NUMBER .)
+    LESS_THAN       reduce using rule 11 (expression -> NUMBER .)
     EQ              reduce using rule 11 (expression -> NUMBER .)
     $end            reduce using rule 11 (expression -> NUMBER .)
     RPAREN          reduce using rule 11 (expression -> NUMBER .)
     COMMA           reduce using rule 11 (expression -> NUMBER .)
 
 
-state 7
+state 6
 
-    (12) expression -> IF . LPAREN expression COMMA expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 21
-
-
-state 8
-
-    (13) expression -> SUM . LPAREN expression RPAREN
-    (14) expression -> SUM . LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 22
-
-
-state 9
-
-    (15) expression -> SUBTRACT . LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 23
-
-
-state 10
-
-    (16) expression -> ADD . LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 24
-
-
-state 11
-
-    (17) expression -> MULTIPLY . LPAREN expression COMMA expression RPAREN
+    (12) expression -> FUNCTION_NAME . LPAREN arg_list RPAREN
 
     LPAREN          shift and go to state 25
 
 
+state 7
+
+    (13) FUNCTION_NAME -> IF .
+
+    LPAREN          reduce using rule 13 (FUNCTION_NAME -> IF .)
+
+
+state 8
+
+    (14) FUNCTION_NAME -> SUM .
+
+    LPAREN          reduce using rule 14 (FUNCTION_NAME -> SUM .)
+
+
+state 9
+
+    (15) FUNCTION_NAME -> SUBTRACT .
+
+    LPAREN          reduce using rule 15 (FUNCTION_NAME -> SUBTRACT .)
+
+
+state 10
+
+    (16) FUNCTION_NAME -> ADD .
+
+    LPAREN          reduce using rule 16 (FUNCTION_NAME -> ADD .)
+
+
+state 11
+
+    (17) FUNCTION_NAME -> MULTIPLY .
+
+    LPAREN          reduce using rule 17 (FUNCTION_NAME -> MULTIPLY .)
+
+
 state 12
+
+    (18) FUNCTION_NAME -> DIVIDE .
+
+    LPAREN          reduce using rule 18 (FUNCTION_NAME -> DIVIDE .)
+
+
+state 13
+
+    (19) FUNCTION_NAME -> AND .
+
+    LPAREN          reduce using rule 19 (FUNCTION_NAME -> AND .)
+
+
+state 14
+
+    (20) FUNCTION_NAME -> OR .
+
+    LPAREN          reduce using rule 20 (FUNCTION_NAME -> OR .)
+
+
+state 15
+
+    (21) FUNCTION_NAME -> GT .
+
+    LPAREN          reduce using rule 21 (FUNCTION_NAME -> GT .)
+
+
+state 16
+
+    (22) FUNCTION_NAME -> LT .
+
+    LPAREN          reduce using rule 22 (FUNCTION_NAME -> LT .)
+
+
+state 17
 
     (1) expression -> expression PLUS . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 26
+    FUNCTION_NAME                  shift and go to state 6
 
-state 13
+state 18
 
     (2) expression -> expression MINUS . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 27
+    FUNCTION_NAME                  shift and go to state 6
 
-state 14
+state 19
 
     (3) expression -> expression TIMES . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 28
+    FUNCTION_NAME                  shift and go to state 6
 
-state 15
+state 20
 
-    (4) expression -> expression DIVIDE . expression
+    (4) expression -> expression SLASH . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 29
+    FUNCTION_NAME                  shift and go to state 6
 
-state 16
+state 21
 
-    (5) expression -> expression GT . expression
+    (5) expression -> expression GREATER_THAN . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 30
+    FUNCTION_NAME                  shift and go to state 6
 
-state 17
+state 22
 
-    (6) expression -> expression LT . expression
+    (6) expression -> expression LESS_THAN . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 31
+    FUNCTION_NAME                  shift and go to state 6
 
-state 18
+state 23
 
     (7) expression -> expression EQ . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
     expression                     shift and go to state 32
+    FUNCTION_NAME                  shift and go to state 6
 
-state 19
-
-    (18) expression -> DIVIDE LPAREN . expression COMMA expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 33
-
-state 20
+state 24
 
     (8) expression -> LPAREN expression . RPAREN
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    RPAREN          shift and go to state 34
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    RPAREN          shift and go to state 33
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
+    GREATER_THAN    shift and go to state 21
+    LESS_THAN       shift and go to state 22
+    EQ              shift and go to state 23
 
-
-state 21
-
-    (12) expression -> IF LPAREN . expression COMMA expression COMMA expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 35
-
-state 22
-
-    (13) expression -> SUM LPAREN . expression RPAREN
-    (14) expression -> SUM LPAREN . expression COMMA expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 36
-
-state 23
-
-    (15) expression -> SUBTRACT LPAREN . expression COMMA expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 37
-
-state 24
-
-    (16) expression -> ADD LPAREN . expression COMMA expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 38
 
 state 25
 
-    (17) expression -> MULTIPLY LPAREN . expression COMMA expression RPAREN
+    (12) expression -> FUNCTION_NAME LPAREN . arg_list RPAREN
+    (23) arg_list -> . expression
+    (24) arg_list -> . arg_list COMMA expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
     (7) expression -> . expression EQ expression
     (8) expression -> . LPAREN expression RPAREN
     (9) expression -> . COLUMN
     (10) expression -> . STRING
     (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
     IF              shift and go to state 7
     SUM             shift and go to state 8
     SUBTRACT        shift and go to state 9
     ADD             shift and go to state 10
     MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
-    expression                     shift and go to state 39
+    FUNCTION_NAME                  shift and go to state 6
+    arg_list                       shift and go to state 34
+    expression                     shift and go to state 35
 
 state 26
 
@@ -714,29 +678,29 @@ state 26
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
     PLUS            reduce using rule 1 (expression -> expression PLUS expression .)
     MINUS           reduce using rule 1 (expression -> expression PLUS expression .)
+    GREATER_THAN    reduce using rule 1 (expression -> expression PLUS expression .)
+    LESS_THAN       reduce using rule 1 (expression -> expression PLUS expression .)
+    EQ              reduce using rule 1 (expression -> expression PLUS expression .)
     $end            reduce using rule 1 (expression -> expression PLUS expression .)
     RPAREN          reduce using rule 1 (expression -> expression PLUS expression .)
     COMMA           reduce using rule 1 (expression -> expression PLUS expression .)
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
 
   ! TIMES           [ reduce using rule 1 (expression -> expression PLUS expression .) ]
-  ! DIVIDE          [ reduce using rule 1 (expression -> expression PLUS expression .) ]
-  ! GT              [ reduce using rule 1 (expression -> expression PLUS expression .) ]
-  ! LT              [ reduce using rule 1 (expression -> expression PLUS expression .) ]
-  ! EQ              [ reduce using rule 1 (expression -> expression PLUS expression .) ]
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
+  ! SLASH           [ reduce using rule 1 (expression -> expression PLUS expression .) ]
+  ! PLUS            [ shift and go to state 17 ]
+  ! MINUS           [ shift and go to state 18 ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 27
@@ -745,29 +709,29 @@ state 27
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
     PLUS            reduce using rule 2 (expression -> expression MINUS expression .)
     MINUS           reduce using rule 2 (expression -> expression MINUS expression .)
+    GREATER_THAN    reduce using rule 2 (expression -> expression MINUS expression .)
+    LESS_THAN       reduce using rule 2 (expression -> expression MINUS expression .)
+    EQ              reduce using rule 2 (expression -> expression MINUS expression .)
     $end            reduce using rule 2 (expression -> expression MINUS expression .)
     RPAREN          reduce using rule 2 (expression -> expression MINUS expression .)
     COMMA           reduce using rule 2 (expression -> expression MINUS expression .)
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
 
   ! TIMES           [ reduce using rule 2 (expression -> expression MINUS expression .) ]
-  ! DIVIDE          [ reduce using rule 2 (expression -> expression MINUS expression .) ]
-  ! GT              [ reduce using rule 2 (expression -> expression MINUS expression .) ]
-  ! LT              [ reduce using rule 2 (expression -> expression MINUS expression .) ]
-  ! EQ              [ reduce using rule 2 (expression -> expression MINUS expression .) ]
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
+  ! SLASH           [ reduce using rule 2 (expression -> expression MINUS expression .) ]
+  ! PLUS            [ shift and go to state 17 ]
+  ! MINUS           [ shift and go to state 18 ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 28
@@ -776,122 +740,122 @@ state 28
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
     PLUS            reduce using rule 3 (expression -> expression TIMES expression .)
     MINUS           reduce using rule 3 (expression -> expression TIMES expression .)
     TIMES           reduce using rule 3 (expression -> expression TIMES expression .)
-    DIVIDE          reduce using rule 3 (expression -> expression TIMES expression .)
+    SLASH           reduce using rule 3 (expression -> expression TIMES expression .)
+    GREATER_THAN    reduce using rule 3 (expression -> expression TIMES expression .)
+    LESS_THAN       reduce using rule 3 (expression -> expression TIMES expression .)
+    EQ              reduce using rule 3 (expression -> expression TIMES expression .)
     $end            reduce using rule 3 (expression -> expression TIMES expression .)
     RPAREN          reduce using rule 3 (expression -> expression TIMES expression .)
     COMMA           reduce using rule 3 (expression -> expression TIMES expression .)
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
 
-  ! GT              [ reduce using rule 3 (expression -> expression TIMES expression .) ]
-  ! LT              [ reduce using rule 3 (expression -> expression TIMES expression .) ]
-  ! EQ              [ reduce using rule 3 (expression -> expression TIMES expression .) ]
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! TIMES           [ shift and go to state 14 ]
-  ! DIVIDE          [ shift and go to state 15 ]
+  ! PLUS            [ shift and go to state 17 ]
+  ! MINUS           [ shift and go to state 18 ]
+  ! TIMES           [ shift and go to state 19 ]
+  ! SLASH           [ shift and go to state 20 ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 29
 
-    (4) expression -> expression DIVIDE expression .
+    (4) expression -> expression SLASH expression .
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    PLUS            reduce using rule 4 (expression -> expression DIVIDE expression .)
-    MINUS           reduce using rule 4 (expression -> expression DIVIDE expression .)
-    TIMES           reduce using rule 4 (expression -> expression DIVIDE expression .)
-    DIVIDE          reduce using rule 4 (expression -> expression DIVIDE expression .)
-    $end            reduce using rule 4 (expression -> expression DIVIDE expression .)
-    RPAREN          reduce using rule 4 (expression -> expression DIVIDE expression .)
-    COMMA           reduce using rule 4 (expression -> expression DIVIDE expression .)
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    PLUS            reduce using rule 4 (expression -> expression SLASH expression .)
+    MINUS           reduce using rule 4 (expression -> expression SLASH expression .)
+    TIMES           reduce using rule 4 (expression -> expression SLASH expression .)
+    SLASH           reduce using rule 4 (expression -> expression SLASH expression .)
+    GREATER_THAN    reduce using rule 4 (expression -> expression SLASH expression .)
+    LESS_THAN       reduce using rule 4 (expression -> expression SLASH expression .)
+    EQ              reduce using rule 4 (expression -> expression SLASH expression .)
+    $end            reduce using rule 4 (expression -> expression SLASH expression .)
+    RPAREN          reduce using rule 4 (expression -> expression SLASH expression .)
+    COMMA           reduce using rule 4 (expression -> expression SLASH expression .)
 
-  ! GT              [ reduce using rule 4 (expression -> expression DIVIDE expression .) ]
-  ! LT              [ reduce using rule 4 (expression -> expression DIVIDE expression .) ]
-  ! EQ              [ reduce using rule 4 (expression -> expression DIVIDE expression .) ]
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! TIMES           [ shift and go to state 14 ]
-  ! DIVIDE          [ shift and go to state 15 ]
+  ! PLUS            [ shift and go to state 17 ]
+  ! MINUS           [ shift and go to state 18 ]
+  ! TIMES           [ shift and go to state 19 ]
+  ! SLASH           [ shift and go to state 20 ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 30
 
-    (5) expression -> expression GT expression .
+    (5) expression -> expression GREATER_THAN expression .
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    PLUS            reduce using rule 5 (expression -> expression GT expression .)
-    MINUS           reduce using rule 5 (expression -> expression GT expression .)
-    TIMES           reduce using rule 5 (expression -> expression GT expression .)
-    DIVIDE          reduce using rule 5 (expression -> expression GT expression .)
-    GT              reduce using rule 5 (expression -> expression GT expression .)
-    LT              reduce using rule 5 (expression -> expression GT expression .)
-    EQ              reduce using rule 5 (expression -> expression GT expression .)
-    $end            reduce using rule 5 (expression -> expression GT expression .)
-    RPAREN          reduce using rule 5 (expression -> expression GT expression .)
-    COMMA           reduce using rule 5 (expression -> expression GT expression .)
+    GREATER_THAN    reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    LESS_THAN       reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    EQ              reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    $end            reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    RPAREN          reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    COMMA           reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
 
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! TIMES           [ shift and go to state 14 ]
-  ! DIVIDE          [ shift and go to state 15 ]
-  ! GT              [ shift and go to state 16 ]
-  ! LT              [ shift and go to state 17 ]
-  ! EQ              [ shift and go to state 18 ]
+  ! PLUS            [ reduce using rule 5 (expression -> expression GREATER_THAN expression .) ]
+  ! MINUS           [ reduce using rule 5 (expression -> expression GREATER_THAN expression .) ]
+  ! TIMES           [ reduce using rule 5 (expression -> expression GREATER_THAN expression .) ]
+  ! SLASH           [ reduce using rule 5 (expression -> expression GREATER_THAN expression .) ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 31
 
-    (6) expression -> expression LT expression .
+    (6) expression -> expression LESS_THAN expression .
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    PLUS            reduce using rule 6 (expression -> expression LT expression .)
-    MINUS           reduce using rule 6 (expression -> expression LT expression .)
-    TIMES           reduce using rule 6 (expression -> expression LT expression .)
-    DIVIDE          reduce using rule 6 (expression -> expression LT expression .)
-    GT              reduce using rule 6 (expression -> expression LT expression .)
-    LT              reduce using rule 6 (expression -> expression LT expression .)
-    EQ              reduce using rule 6 (expression -> expression LT expression .)
-    $end            reduce using rule 6 (expression -> expression LT expression .)
-    RPAREN          reduce using rule 6 (expression -> expression LT expression .)
-    COMMA           reduce using rule 6 (expression -> expression LT expression .)
+    GREATER_THAN    reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    LESS_THAN       reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    EQ              reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    $end            reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    RPAREN          reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    COMMA           reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
 
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! TIMES           [ shift and go to state 14 ]
-  ! DIVIDE          [ shift and go to state 15 ]
-  ! GT              [ shift and go to state 16 ]
-  ! LT              [ shift and go to state 17 ]
-  ! EQ              [ shift and go to state 18 ]
+  ! PLUS            [ reduce using rule 6 (expression -> expression LESS_THAN expression .) ]
+  ! MINUS           [ reduce using rule 6 (expression -> expression LESS_THAN expression .) ]
+  ! TIMES           [ reduce using rule 6 (expression -> expression LESS_THAN expression .) ]
+  ! SLASH           [ reduce using rule 6 (expression -> expression LESS_THAN expression .) ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 32
@@ -900,675 +864,156 @@ state 32
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    PLUS            reduce using rule 7 (expression -> expression EQ expression .)
-    MINUS           reduce using rule 7 (expression -> expression EQ expression .)
-    TIMES           reduce using rule 7 (expression -> expression EQ expression .)
-    DIVIDE          reduce using rule 7 (expression -> expression EQ expression .)
-    GT              reduce using rule 7 (expression -> expression EQ expression .)
-    LT              reduce using rule 7 (expression -> expression EQ expression .)
+    GREATER_THAN    reduce using rule 7 (expression -> expression EQ expression .)
+    LESS_THAN       reduce using rule 7 (expression -> expression EQ expression .)
     EQ              reduce using rule 7 (expression -> expression EQ expression .)
     $end            reduce using rule 7 (expression -> expression EQ expression .)
     RPAREN          reduce using rule 7 (expression -> expression EQ expression .)
     COMMA           reduce using rule 7 (expression -> expression EQ expression .)
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
 
-  ! PLUS            [ shift and go to state 12 ]
-  ! MINUS           [ shift and go to state 13 ]
-  ! TIMES           [ shift and go to state 14 ]
-  ! DIVIDE          [ shift and go to state 15 ]
-  ! GT              [ shift and go to state 16 ]
-  ! LT              [ shift and go to state 17 ]
-  ! EQ              [ shift and go to state 18 ]
+  ! PLUS            [ reduce using rule 7 (expression -> expression EQ expression .) ]
+  ! MINUS           [ reduce using rule 7 (expression -> expression EQ expression .) ]
+  ! TIMES           [ reduce using rule 7 (expression -> expression EQ expression .) ]
+  ! SLASH           [ reduce using rule 7 (expression -> expression EQ expression .) ]
+  ! GREATER_THAN    [ shift and go to state 21 ]
+  ! LESS_THAN       [ shift and go to state 22 ]
+  ! EQ              [ shift and go to state 23 ]
 
 
 state 33
-
-    (18) expression -> DIVIDE LPAREN expression . COMMA expression RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    COMMA           shift and go to state 40
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 34
 
     (8) expression -> LPAREN expression RPAREN .
 
     PLUS            reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     MINUS           reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     TIMES           reduce using rule 8 (expression -> LPAREN expression RPAREN .)
-    DIVIDE          reduce using rule 8 (expression -> LPAREN expression RPAREN .)
-    GT              reduce using rule 8 (expression -> LPAREN expression RPAREN .)
-    LT              reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    SLASH           reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    GREATER_THAN    reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    LESS_THAN       reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     EQ              reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     $end            reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     RPAREN          reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     COMMA           reduce using rule 8 (expression -> LPAREN expression RPAREN .)
 
 
+state 34
+
+    (12) expression -> FUNCTION_NAME LPAREN arg_list . RPAREN
+    (24) arg_list -> arg_list . COMMA expression
+
+    RPAREN          shift and go to state 36
+    COMMA           shift and go to state 37
+
+
 state 35
 
-    (12) expression -> IF LPAREN expression . COMMA expression COMMA expression RPAREN
+    (23) arg_list -> expression .
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    COMMA           shift and go to state 41
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    RPAREN          reduce using rule 23 (arg_list -> expression .)
+    COMMA           reduce using rule 23 (arg_list -> expression .)
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
+    GREATER_THAN    shift and go to state 21
+    LESS_THAN       shift and go to state 22
+    EQ              shift and go to state 23
 
 
 state 36
 
-    (13) expression -> SUM LPAREN expression . RPAREN
-    (14) expression -> SUM LPAREN expression . COMMA expression RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
+    (12) expression -> FUNCTION_NAME LPAREN arg_list RPAREN .
 
-    RPAREN          shift and go to state 42
-    COMMA           shift and go to state 43
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    PLUS            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    MINUS           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    TIMES           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    SLASH           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    GREATER_THAN    reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    LESS_THAN       reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    EQ              reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    $end            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    RPAREN          reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    COMMA           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
 
 
 state 37
 
-    (15) expression -> SUBTRACT LPAREN expression . COMMA expression RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
+    (24) arg_list -> arg_list COMMA . expression
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) FUNCTION_NAME -> . IF
+    (14) FUNCTION_NAME -> . SUM
+    (15) FUNCTION_NAME -> . SUBTRACT
+    (16) FUNCTION_NAME -> . ADD
+    (17) FUNCTION_NAME -> . MULTIPLY
+    (18) FUNCTION_NAME -> . DIVIDE
+    (19) FUNCTION_NAME -> . AND
+    (20) FUNCTION_NAME -> . OR
+    (21) FUNCTION_NAME -> . GT
+    (22) FUNCTION_NAME -> . LT
 
-    COMMA           shift and go to state 44
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IF              shift and go to state 7
+    SUM             shift and go to state 8
+    SUBTRACT        shift and go to state 9
+    ADD             shift and go to state 10
+    MULTIPLY        shift and go to state 11
+    DIVIDE          shift and go to state 12
+    AND             shift and go to state 13
+    OR              shift and go to state 14
+    GT              shift and go to state 15
+    LT              shift and go to state 16
 
+    expression                     shift and go to state 38
+    FUNCTION_NAME                  shift and go to state 6
 
 state 38
 
-    (16) expression -> ADD LPAREN expression . COMMA expression RPAREN
+    (24) arg_list -> arg_list COMMA expression .
     (1) expression -> expression . PLUS expression
     (2) expression -> expression . MINUS expression
     (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    COMMA           shift and go to state 45
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 39
-
-    (17) expression -> MULTIPLY LPAREN expression . COMMA expression RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    COMMA           shift and go to state 46
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 40
-
-    (18) expression -> DIVIDE LPAREN expression COMMA . expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 47
-
-state 41
-
-    (12) expression -> IF LPAREN expression COMMA . expression COMMA expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 48
-
-state 42
-
-    (13) expression -> SUM LPAREN expression RPAREN .
-
-    PLUS            reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    MINUS           reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    TIMES           reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    DIVIDE          reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    GT              reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    LT              reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    EQ              reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    $end            reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    RPAREN          reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-    COMMA           reduce using rule 13 (expression -> SUM LPAREN expression RPAREN .)
-
-
-state 43
-
-    (14) expression -> SUM LPAREN expression COMMA . expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 49
-
-state 44
-
-    (15) expression -> SUBTRACT LPAREN expression COMMA . expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 50
-
-state 45
-
-    (16) expression -> ADD LPAREN expression COMMA . expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 51
-
-state 46
-
-    (17) expression -> MULTIPLY LPAREN expression COMMA . expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 52
-
-state 47
-
-    (18) expression -> DIVIDE LPAREN expression COMMA expression . RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    RPAREN          shift and go to state 53
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 48
-
-    (12) expression -> IF LPAREN expression COMMA expression . COMMA expression RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    COMMA           shift and go to state 54
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 49
-
-    (14) expression -> SUM LPAREN expression COMMA expression . RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    RPAREN          shift and go to state 55
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 50
-
-    (15) expression -> SUBTRACT LPAREN expression COMMA expression . RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    RPAREN          shift and go to state 56
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 51
-
-    (16) expression -> ADD LPAREN expression COMMA expression . RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    RPAREN          shift and go to state 57
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 52
-
-    (17) expression -> MULTIPLY LPAREN expression COMMA expression . RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    RPAREN          shift and go to state 58
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 53
-
-    (18) expression -> DIVIDE LPAREN expression COMMA expression RPAREN .
-
-    PLUS            reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    MINUS           reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    TIMES           reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    DIVIDE          reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    GT              reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    LT              reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    EQ              reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    $end            reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    RPAREN          reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-    COMMA           reduce using rule 18 (expression -> DIVIDE LPAREN expression COMMA expression RPAREN .)
-
-
-state 54
-
-    (12) expression -> IF LPAREN expression COMMA expression COMMA . expression RPAREN
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression DIVIDE expression
-    (5) expression -> . expression GT expression
-    (6) expression -> . expression LT expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . IF LPAREN expression COMMA expression COMMA expression RPAREN
-    (13) expression -> . SUM LPAREN expression RPAREN
-    (14) expression -> . SUM LPAREN expression COMMA expression RPAREN
-    (15) expression -> . SUBTRACT LPAREN expression COMMA expression RPAREN
-    (16) expression -> . ADD LPAREN expression COMMA expression RPAREN
-    (17) expression -> . MULTIPLY LPAREN expression COMMA expression RPAREN
-    (18) expression -> . DIVIDE LPAREN expression COMMA expression RPAREN
-
-    LPAREN          shift and go to state 3
-    COLUMN          shift and go to state 4
-    STRING          shift and go to state 5
-    NUMBER          shift and go to state 6
-    IF              shift and go to state 7
-    SUM             shift and go to state 8
-    SUBTRACT        shift and go to state 9
-    ADD             shift and go to state 10
-    MULTIPLY        shift and go to state 11
-    DIVIDE          shift and go to state 2
-
-    expression                     shift and go to state 59
-
-state 55
-
-    (14) expression -> SUM LPAREN expression COMMA expression RPAREN .
-
-    PLUS            reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    MINUS           reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    TIMES           reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    DIVIDE          reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    GT              reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    LT              reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    EQ              reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    $end            reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    RPAREN          reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-    COMMA           reduce using rule 14 (expression -> SUM LPAREN expression COMMA expression RPAREN .)
-
-
-state 56
-
-    (15) expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .
-
-    PLUS            reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    MINUS           reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    TIMES           reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    DIVIDE          reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    GT              reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    LT              reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    EQ              reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    $end            reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    RPAREN          reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-    COMMA           reduce using rule 15 (expression -> SUBTRACT LPAREN expression COMMA expression RPAREN .)
-
-
-state 57
-
-    (16) expression -> ADD LPAREN expression COMMA expression RPAREN .
-
-    PLUS            reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    MINUS           reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    TIMES           reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    DIVIDE          reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    GT              reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    LT              reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    EQ              reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    $end            reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    RPAREN          reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-    COMMA           reduce using rule 16 (expression -> ADD LPAREN expression COMMA expression RPAREN .)
-
-
-state 58
-
-    (17) expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .
-
-    PLUS            reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    MINUS           reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    TIMES           reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    DIVIDE          reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    GT              reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    LT              reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    EQ              reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    $end            reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    RPAREN          reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-    COMMA           reduce using rule 17 (expression -> MULTIPLY LPAREN expression COMMA expression RPAREN .)
-
-
-state 59
-
-    (12) expression -> IF LPAREN expression COMMA expression COMMA expression . RPAREN
-    (1) expression -> expression . PLUS expression
-    (2) expression -> expression . MINUS expression
-    (3) expression -> expression . TIMES expression
-    (4) expression -> expression . DIVIDE expression
-    (5) expression -> expression . GT expression
-    (6) expression -> expression . LT expression
-    (7) expression -> expression . EQ expression
-
-    RPAREN          shift and go to state 60
-    PLUS            shift and go to state 12
-    MINUS           shift and go to state 13
-    TIMES           shift and go to state 14
-    DIVIDE          shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    EQ              shift and go to state 18
-
-
-state 60
-
-    (12) expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .
-
-    PLUS            reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    MINUS           reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    TIMES           reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    DIVIDE          reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    GT              reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    LT              reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    EQ              reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    $end            reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    RPAREN          reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
-    COMMA           reduce using rule 12 (expression -> IF LPAREN expression COMMA expression COMMA expression RPAREN .)
+    RPAREN          reduce using rule 24 (arg_list -> arg_list COMMA expression .)
+    COMMA           reduce using rule 24 (arg_list -> arg_list COMMA expression .)
+    PLUS            shift and go to state 17
+    MINUS           shift and go to state 18
+    TIMES           shift and go to state 19
+    SLASH           shift and go to state 20
+    GREATER_THAN    shift and go to state 21
+    LESS_THAN       shift and go to state 22
+    EQ              shift and go to state 23
 

@@ -1,25 +1,29 @@
+# core/parser.py
+
 import ply.yacc as yacc
 from core.lexer import tokens
 
-# Precedence rules for arithmetic operations
+# Precedence rules for arithmetic and comparison operations
 precedence = (
+    ('left', 'AND'),
+    ('left', 'OR'),
+    ('nonassoc', 'GREATER_THAN', 'LESS_THAN', 'EQ'),
     ('left', 'PLUS', 'MINUS'),
-    ('left', 'TIMES', 'DIVIDE'),
-    ('nonassoc', 'GT', 'LT', 'EQ'),  # Add precedence for comparison operators
+    ('left', 'TIMES', 'SLASH'),
 )
-
 # Grammar rules
 
-# Basic arithmetic and comparison operations
+## Expression parsing
 def p_expression_binop(p):
     '''expression : expression PLUS expression
                   | expression MINUS expression
                   | expression TIMES expression
-                  | expression DIVIDE expression
-                  | expression GT expression
-                  | expression LT expression
+                  | expression SLASH expression
+                  | expression GREATER_THAN expression
+                  | expression LESS_THAN expression
                   | expression EQ expression'''
     p[0] = ('binop', p[2], p[1], p[3])
+
 
 # Parentheses
 def p_expression_group(p):
@@ -37,29 +41,38 @@ def p_expression_number(p):
     'expression : NUMBER'
     p[0] = p[1]
 
-# Function handling (e.g., IF, SUM, ADD, SUBTRACT)
+# Function handling
 def p_expression_function(p):
-    '''expression : IF LPAREN expression COMMA expression COMMA expression RPAREN
-                  | SUM LPAREN expression RPAREN
-                  | SUM LPAREN expression COMMA expression RPAREN
-                  | SUBTRACT LPAREN expression COMMA expression RPAREN
-                  | ADD LPAREN expression COMMA expression RPAREN
-                  | MULTIPLY LPAREN expression COMMA expression RPAREN
-                  | DIVIDE LPAREN expression COMMA expression RPAREN'''
-    
-    if p[1] == 'IF':
-        p[0] = ('if', p[3], p[5], p[7])
-    elif p[1] == 'SUM':
-        if len(p) == 5:  # Handling SUM with one argument
-            p[0] = ('sum', p[3])
-        else:  # Handling SUM with two arguments
-            p[0] = ('sum', p[3], p[5])
-    elif p[1] in ['SUBTRACT', 'ADD', 'MULTIPLY', 'DIVIDE']:
-        p[0] = (p[1].lower(), p[3], p[5])
+    '''expression : FUNCTION_NAME LPAREN arg_list RPAREN'''
+    p[0] = (p[1].lower(), p[3])
+
+def p_FUNCTION_NAME(p):
+    '''FUNCTION_NAME : IF
+                     | SUM
+                     | SUBTRACT
+                     | ADD
+                     | MULTIPLY
+                     | DIVIDE
+                     | AND
+                     | OR
+                     | GT
+                     | LT'''
+    p[0] = p[1]
+
+def p_arg_list(p):
+    '''arg_list : expression
+                | arg_list COMMA expression'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[0] = p[1] + [p[3]]
 
 # Error handling rule
 def p_error(p):
-    print(f"Syntax error at '{p.value}'")
+    if p:
+        print(f"Syntax error at '{p.value}'")
+    else:
+        print("Syntax error at EOF")
 
 # Build the parser
 parser = yacc.yacc()
