@@ -1,34 +1,40 @@
 # eval/evaluator.py
 
-from datafusion import functions as f, col, literal
+from datafusion import functions as f, col, lit
 from datafusion.functions import case
 from functools import reduce
-from exceptions.custom_exceptions import DataTypeMismatchError, ColumnNotFoundError, InvalidOperationError
+from exceptions.custom_exceptions import (
+    DataTypeMismatchError,
+    ColumnNotFoundError,
+    InvalidOperationError,
+)
 
-# Function registry mapping function names to (function, is_aggregate) tuples
+# Function registry mapping function names to functions and is_aggregate flag
 FUNCTION_REGISTRY = {
-    'sum': (lambda args: f.sum(args[0]).alias('sum'), True),
-    'subtract': (lambda args: (args[0] - args[1]).alias('subtract'), False),
-    'add': (lambda args: (args[0] + args[1]).alias('add'), False),
-    'multiply': (lambda args: (args[0] * args[1]).alias('multiply'), False),
-    'divide': (lambda args: (args[0] / args[1]).alias('divide'), False),
-    'if': (lambda args: case(args[0])
-                   .when(literal(True), args[1])
-                   .otherwise(args[2]).alias('if'), False),
-    'and': (lambda args: reduce(lambda x, y: x & y, args).alias('and'), False),
-    'gt': (lambda args: (args[0] > args[1]), False),
-    'gte': (lambda args: (args[0] >= args[1]), False),  # Added
-    'lt': (lambda args: (args[0] < args[1]), False),
-    'lte': (lambda args: (args[0] <= args[1]), False),  # Added if needed
+    'sum': (lambda arg: f.sum(arg).alias('sum'), True),
+    'subtract': (lambda left, right: (left - right).alias('subtract'), False),
+    'add': (lambda left, right: (left + right).alias('add'), False),
+    'multiply': (lambda left, right: (left * right).alias('multiply'), False),
+    'divide': (lambda left, right: (left / right).alias('divide'), False),
+    'if': (lambda condition, true_expr, false_expr: case(condition)
+           .when(lit(True), true_expr)
+           .otherwise(false_expr)
+           .alias('if'), False),
+    'and': (lambda *conditions: reduce(lambda x, y: x & y, conditions).alias('and'), False),
+    'gt': (lambda left, right: (left > right).alias('gt'), False),
+    'gte': (lambda left, right: (left >= right).alias('gte'), False),
+    'lt': (lambda left, right: (left < right).alias('lt'), False),
+    'lte': (lambda left, right: (left <= right).alias('lte'), False),
     # Add other functions as needed
 }
 
 def ast_to_datafusion_expr(ast, df_schema=None):
+    """Convert AST to DataFusion expression."""
     if isinstance(ast, int):
-        return literal(ast), False  # Literal number is not an aggregate
+        return lit(ast), False  # Literal number is not an aggregate
 
     if isinstance(ast, str):
-        return literal(ast), False  # Literal string is not an aggregate
+        return lit(ast), False  # Literal string is not an aggregate
 
     if isinstance(ast, tuple):
         node_type = ast[0]
@@ -40,7 +46,7 @@ def ast_to_datafusion_expr(ast, df_schema=None):
             return col(column_name), False  # Column reference is not an aggregate
 
         elif node_type == 'string':
-            return literal(ast[1]), False  # String literal
+            return lit(ast[1]), False  # String literal
 
         elif node_type in FUNCTION_REGISTRY:
             args = []
@@ -52,7 +58,7 @@ def ast_to_datafusion_expr(ast, df_schema=None):
                     is_aggregate = True
 
             func, func_is_aggregate = FUNCTION_REGISTRY[node_type]
-            expr = func(args)
+            expr = func(*args)  # Unpack args when calling the function
             is_aggregate = func_is_aggregate or is_aggregate
             return expr, is_aggregate
         else:
