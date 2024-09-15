@@ -5,6 +5,10 @@ import ply.lex as lex
 # Define reserved words
 reserved = {
     'IF': 'IF',
+    'THEN': 'THEN',
+    'ELSE': 'ELSE',
+    'END': 'END',
+    'ELSEIF': 'ELSEIF', 
     'SUM': 'SUM',
     'SUBTRACT': 'SUBTRACT',
     'ADD': 'ADD',

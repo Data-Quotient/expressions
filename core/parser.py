@@ -3,12 +3,14 @@ import ply.yacc as yacc
 from core.lexer import tokens
 
 # Precedence rules for arithmetic and comparison operations
+# Precedence rules for arithmetic, comparison, and conditional operators
 precedence = (
     ('left', 'AND'),
     ('left', 'OR'),
     ('nonassoc', 'GREATER_THAN', 'LESS_THAN', 'EQ'),
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'SLASH'),
+    ('right', 'IF'),  # Give precedence to IF
 )
 
 # Grammar rules
@@ -72,6 +74,31 @@ def p_arg_list(p):
         p[0] = [p[1]]
     else:
         p[0] = p[1] + [p[3]]
+
+# New rules for if-else and else if (CASE handling)
+def p_expression_if(p):
+    '''expression : IF expression THEN expression if_expression_tail END'''
+    # Build a list of (condition, expression) tuples
+    p[0] = ('if_chain', [(p[2], p[4])] + p[5])
+
+def p_if_expression_tail(p):
+    '''if_expression_tail : ELSEIF expression THEN expression if_expression_tail
+                          | ELSE expression
+                          | empty'''
+    if len(p) == 6:
+        # More ELSEIF clauses
+        p[0] = [(p[2], p[4])] + p[5]
+    elif len(p) == 3:
+        # ELSE clause
+        p[0] = [('else', p[2])]
+    else:
+        # No more clauses
+        p[0] = []
+
+# Handle empty rule
+def p_empty(p):
+    'empty :'
+    pass
 
 # Error handling rule
 def p_error(p):

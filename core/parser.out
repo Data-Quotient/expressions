@@ -30,6 +30,11 @@ Rule 24    FUNCTION_NAME -> GTE
 Rule 25    FUNCTION_NAME -> LTE
 Rule 26    arg_list -> expression
 Rule 27    arg_list -> arg_list COMMA expression
+Rule 28    expression -> IF expression THEN expression if_expression_tail END
+Rule 29    if_expression_tail -> ELSEIF expression THEN expression if_expression_tail
+Rule 30    if_expression_tail -> ELSE expression
+Rule 31    if_expression_tail -> empty
+Rule 32    empty -> <empty>
 
 Terminals, with rules where they appear
 
@@ -38,12 +43,15 @@ AND                  : 20
 COLUMN               : 9
 COMMA                : 27
 DIVIDE               : 19
+ELSE                 : 30
+ELSEIF               : 29
+END                  : 28
 EQ                   : 7
 GREATER_THAN         : 5
 GT                   : 22
 GTE                  : 24
 IDENTIFIER           : 13
-IF                   : 14
+IF                   : 14 28
 LESS_THAN            : 6
 LPAREN               : 8 12 13
 LT                   : 23
@@ -58,6 +66,7 @@ SLASH                : 4
 STRING               : 10
 SUBTRACT             : 16
 SUM                  : 15
+THEN                 : 28 29
 TIMES                : 3
 error                : 
 
@@ -65,7 +74,9 @@ Nonterminals, with rules where they appear
 
 FUNCTION_NAME        : 12
 arg_list             : 12 13 27
-expression           : 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 26 27 0
+empty                : 31
+expression           : 1 1 2 2 3 3 4 4 5 5 6 6 7 7 8 26 27 28 28 29 29 30 0
+if_expression_tail   : 28 29
 
 Parsing method: LALR
 
@@ -85,6 +96,7 @@ state 0
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -155,6 +167,7 @@ state 2
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -202,7 +215,11 @@ state 3
     EQ              reduce using rule 9 (expression -> COLUMN .)
     $end            reduce using rule 9 (expression -> COLUMN .)
     RPAREN          reduce using rule 9 (expression -> COLUMN .)
+    THEN            reduce using rule 9 (expression -> COLUMN .)
     COMMA           reduce using rule 9 (expression -> COLUMN .)
+    ELSEIF          reduce using rule 9 (expression -> COLUMN .)
+    ELSE            reduce using rule 9 (expression -> COLUMN .)
+    END             reduce using rule 9 (expression -> COLUMN .)
 
 
 state 4
@@ -218,7 +235,11 @@ state 4
     EQ              reduce using rule 10 (expression -> STRING .)
     $end            reduce using rule 10 (expression -> STRING .)
     RPAREN          reduce using rule 10 (expression -> STRING .)
+    THEN            reduce using rule 10 (expression -> STRING .)
     COMMA           reduce using rule 10 (expression -> STRING .)
+    ELSEIF          reduce using rule 10 (expression -> STRING .)
+    ELSE            reduce using rule 10 (expression -> STRING .)
+    END             reduce using rule 10 (expression -> STRING .)
 
 
 state 5
@@ -234,7 +255,11 @@ state 5
     EQ              reduce using rule 11 (expression -> NUMBER .)
     $end            reduce using rule 11 (expression -> NUMBER .)
     RPAREN          reduce using rule 11 (expression -> NUMBER .)
+    THEN            reduce using rule 11 (expression -> NUMBER .)
     COMMA           reduce using rule 11 (expression -> NUMBER .)
+    ELSEIF          reduce using rule 11 (expression -> NUMBER .)
+    ELSE            reduce using rule 11 (expression -> NUMBER .)
+    END             reduce using rule 11 (expression -> NUMBER .)
 
 
 state 6
@@ -253,10 +278,57 @@ state 7
 
 state 8
 
+    (28) expression -> IF . expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> IF .
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
+    (14) FUNCTION_NAME -> . IF
+    (15) FUNCTION_NAME -> . SUM
+    (16) FUNCTION_NAME -> . SUBTRACT
+    (17) FUNCTION_NAME -> . ADD
+    (18) FUNCTION_NAME -> . MULTIPLY
+    (19) FUNCTION_NAME -> . DIVIDE
+    (20) FUNCTION_NAME -> . AND
+    (21) FUNCTION_NAME -> . OR
+    (22) FUNCTION_NAME -> . GT
+    (23) FUNCTION_NAME -> . LT
+    (24) FUNCTION_NAME -> . GTE
+    (25) FUNCTION_NAME -> . LTE
 
     LPAREN          reduce using rule 14 (FUNCTION_NAME -> IF .)
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IDENTIFIER      shift and go to state 7
+    IF              shift and go to state 8
+    SUM             shift and go to state 9
+    SUBTRACT        shift and go to state 10
+    ADD             shift and go to state 11
+    MULTIPLY        shift and go to state 12
+    DIVIDE          shift and go to state 13
+    AND             shift and go to state 14
+    OR              shift and go to state 15
+    GT              shift and go to state 16
+    LT              shift and go to state 17
+    GTE             shift and go to state 18
+    LTE             shift and go to state 19
 
+  ! LPAREN          [ shift and go to state 2 ]
+
+    expression                     shift and go to state 30
+    FUNCTION_NAME                  shift and go to state 6
 
 state 9
 
@@ -351,56 +423,7 @@ state 20
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
-    (14) FUNCTION_NAME -> . IF
-    (15) FUNCTION_NAME -> . SUM
-    (16) FUNCTION_NAME -> . SUBTRACT
-    (17) FUNCTION_NAME -> . ADD
-    (18) FUNCTION_NAME -> . MULTIPLY
-    (19) FUNCTION_NAME -> . DIVIDE
-    (20) FUNCTION_NAME -> . AND
-    (21) FUNCTION_NAME -> . OR
-    (22) FUNCTION_NAME -> . GT
-    (23) FUNCTION_NAME -> . LT
-    (24) FUNCTION_NAME -> . GTE
-    (25) FUNCTION_NAME -> . LTE
-
-    LPAREN          shift and go to state 2
-    COLUMN          shift and go to state 3
-    STRING          shift and go to state 4
-    NUMBER          shift and go to state 5
-    IDENTIFIER      shift and go to state 7
-    IF              shift and go to state 8
-    SUM             shift and go to state 9
-    SUBTRACT        shift and go to state 10
-    ADD             shift and go to state 11
-    MULTIPLY        shift and go to state 12
-    DIVIDE          shift and go to state 13
-    AND             shift and go to state 14
-    OR              shift and go to state 15
-    GT              shift and go to state 16
-    LT              shift and go to state 17
-    GTE             shift and go to state 18
-    LTE             shift and go to state 19
-
-    expression                     shift and go to state 30
-    FUNCTION_NAME                  shift and go to state 6
-
-state 21
-
-    (2) expression -> expression MINUS . expression
-    (1) expression -> . expression PLUS expression
-    (2) expression -> . expression MINUS expression
-    (3) expression -> . expression TIMES expression
-    (4) expression -> . expression SLASH expression
-    (5) expression -> . expression GREATER_THAN expression
-    (6) expression -> . expression LESS_THAN expression
-    (7) expression -> . expression EQ expression
-    (8) expression -> . LPAREN expression RPAREN
-    (9) expression -> . COLUMN
-    (10) expression -> . STRING
-    (11) expression -> . NUMBER
-    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
-    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -435,9 +458,9 @@ state 21
     expression                     shift and go to state 31
     FUNCTION_NAME                  shift and go to state 6
 
-state 22
+state 21
 
-    (3) expression -> expression TIMES . expression
+    (2) expression -> expression MINUS . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
@@ -451,6 +474,7 @@ state 22
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -485,9 +509,9 @@ state 22
     expression                     shift and go to state 32
     FUNCTION_NAME                  shift and go to state 6
 
-state 23
+state 22
 
-    (4) expression -> expression SLASH . expression
+    (3) expression -> expression TIMES . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
@@ -501,6 +525,7 @@ state 23
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -535,9 +560,9 @@ state 23
     expression                     shift and go to state 33
     FUNCTION_NAME                  shift and go to state 6
 
-state 24
+state 23
 
-    (5) expression -> expression GREATER_THAN . expression
+    (4) expression -> expression SLASH . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
@@ -551,6 +576,7 @@ state 24
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -585,9 +611,9 @@ state 24
     expression                     shift and go to state 34
     FUNCTION_NAME                  shift and go to state 6
 
-state 25
+state 24
 
-    (6) expression -> expression LESS_THAN . expression
+    (5) expression -> expression GREATER_THAN . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
@@ -601,6 +627,7 @@ state 25
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -635,9 +662,9 @@ state 25
     expression                     shift and go to state 35
     FUNCTION_NAME                  shift and go to state 6
 
-state 26
+state 25
 
-    (7) expression -> expression EQ . expression
+    (6) expression -> expression LESS_THAN . expression
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
@@ -651,6 +678,7 @@ state 26
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -685,6 +713,57 @@ state 26
     expression                     shift and go to state 36
     FUNCTION_NAME                  shift and go to state 6
 
+state 26
+
+    (7) expression -> expression EQ . expression
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
+    (14) FUNCTION_NAME -> . IF
+    (15) FUNCTION_NAME -> . SUM
+    (16) FUNCTION_NAME -> . SUBTRACT
+    (17) FUNCTION_NAME -> . ADD
+    (18) FUNCTION_NAME -> . MULTIPLY
+    (19) FUNCTION_NAME -> . DIVIDE
+    (20) FUNCTION_NAME -> . AND
+    (21) FUNCTION_NAME -> . OR
+    (22) FUNCTION_NAME -> . GT
+    (23) FUNCTION_NAME -> . LT
+    (24) FUNCTION_NAME -> . GTE
+    (25) FUNCTION_NAME -> . LTE
+
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IDENTIFIER      shift and go to state 7
+    IF              shift and go to state 8
+    SUM             shift and go to state 9
+    SUBTRACT        shift and go to state 10
+    ADD             shift and go to state 11
+    MULTIPLY        shift and go to state 12
+    DIVIDE          shift and go to state 13
+    AND             shift and go to state 14
+    OR              shift and go to state 15
+    GT              shift and go to state 16
+    LT              shift and go to state 17
+    GTE             shift and go to state 18
+    LTE             shift and go to state 19
+
+    expression                     shift and go to state 37
+    FUNCTION_NAME                  shift and go to state 6
+
 state 27
 
     (8) expression -> LPAREN expression . RPAREN
@@ -696,7 +775,7 @@ state 27
     (6) expression -> expression . LESS_THAN expression
     (7) expression -> expression . EQ expression
 
-    RPAREN          shift and go to state 37
+    RPAREN          shift and go to state 38
     PLUS            shift and go to state 20
     MINUS           shift and go to state 21
     TIMES           shift and go to state 22
@@ -724,6 +803,7 @@ state 28
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -756,8 +836,8 @@ state 28
     LTE             shift and go to state 19
 
     FUNCTION_NAME                  shift and go to state 6
-    arg_list                       shift and go to state 38
-    expression                     shift and go to state 39
+    arg_list                       shift and go to state 39
+    expression                     shift and go to state 40
 
 state 29
 
@@ -777,6 +857,7 @@ state 29
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -808,11 +889,32 @@ state 29
     GTE             shift and go to state 18
     LTE             shift and go to state 19
 
-    arg_list                       shift and go to state 40
-    expression                     shift and go to state 39
+    arg_list                       shift and go to state 41
+    expression                     shift and go to state 40
     FUNCTION_NAME                  shift and go to state 6
 
 state 30
+
+    (28) expression -> IF expression . THEN expression if_expression_tail END
+    (1) expression -> expression . PLUS expression
+    (2) expression -> expression . MINUS expression
+    (3) expression -> expression . TIMES expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
+    (7) expression -> expression . EQ expression
+
+    THEN            shift and go to state 42
+    PLUS            shift and go to state 20
+    MINUS           shift and go to state 21
+    TIMES           shift and go to state 22
+    SLASH           shift and go to state 23
+    GREATER_THAN    shift and go to state 24
+    LESS_THAN       shift and go to state 25
+    EQ              shift and go to state 26
+
+
+state 31
 
     (1) expression -> expression PLUS expression .
     (1) expression -> expression . PLUS expression
@@ -830,7 +932,11 @@ state 30
     EQ              reduce using rule 1 (expression -> expression PLUS expression .)
     $end            reduce using rule 1 (expression -> expression PLUS expression .)
     RPAREN          reduce using rule 1 (expression -> expression PLUS expression .)
+    THEN            reduce using rule 1 (expression -> expression PLUS expression .)
     COMMA           reduce using rule 1 (expression -> expression PLUS expression .)
+    ELSEIF          reduce using rule 1 (expression -> expression PLUS expression .)
+    ELSE            reduce using rule 1 (expression -> expression PLUS expression .)
+    END             reduce using rule 1 (expression -> expression PLUS expression .)
     TIMES           shift and go to state 22
     SLASH           shift and go to state 23
 
@@ -843,7 +949,7 @@ state 30
   ! EQ              [ shift and go to state 26 ]
 
 
-state 31
+state 32
 
     (2) expression -> expression MINUS expression .
     (1) expression -> expression . PLUS expression
@@ -861,7 +967,11 @@ state 31
     EQ              reduce using rule 2 (expression -> expression MINUS expression .)
     $end            reduce using rule 2 (expression -> expression MINUS expression .)
     RPAREN          reduce using rule 2 (expression -> expression MINUS expression .)
+    THEN            reduce using rule 2 (expression -> expression MINUS expression .)
     COMMA           reduce using rule 2 (expression -> expression MINUS expression .)
+    ELSEIF          reduce using rule 2 (expression -> expression MINUS expression .)
+    ELSE            reduce using rule 2 (expression -> expression MINUS expression .)
+    END             reduce using rule 2 (expression -> expression MINUS expression .)
     TIMES           shift and go to state 22
     SLASH           shift and go to state 23
 
@@ -874,7 +984,7 @@ state 31
   ! EQ              [ shift and go to state 26 ]
 
 
-state 32
+state 33
 
     (3) expression -> expression TIMES expression .
     (1) expression -> expression . PLUS expression
@@ -894,7 +1004,11 @@ state 32
     EQ              reduce using rule 3 (expression -> expression TIMES expression .)
     $end            reduce using rule 3 (expression -> expression TIMES expression .)
     RPAREN          reduce using rule 3 (expression -> expression TIMES expression .)
+    THEN            reduce using rule 3 (expression -> expression TIMES expression .)
     COMMA           reduce using rule 3 (expression -> expression TIMES expression .)
+    ELSEIF          reduce using rule 3 (expression -> expression TIMES expression .)
+    ELSE            reduce using rule 3 (expression -> expression TIMES expression .)
+    END             reduce using rule 3 (expression -> expression TIMES expression .)
 
   ! PLUS            [ shift and go to state 20 ]
   ! MINUS           [ shift and go to state 21 ]
@@ -905,7 +1019,7 @@ state 32
   ! EQ              [ shift and go to state 26 ]
 
 
-state 33
+state 34
 
     (4) expression -> expression SLASH expression .
     (1) expression -> expression . PLUS expression
@@ -925,7 +1039,11 @@ state 33
     EQ              reduce using rule 4 (expression -> expression SLASH expression .)
     $end            reduce using rule 4 (expression -> expression SLASH expression .)
     RPAREN          reduce using rule 4 (expression -> expression SLASH expression .)
+    THEN            reduce using rule 4 (expression -> expression SLASH expression .)
     COMMA           reduce using rule 4 (expression -> expression SLASH expression .)
+    ELSEIF          reduce using rule 4 (expression -> expression SLASH expression .)
+    ELSE            reduce using rule 4 (expression -> expression SLASH expression .)
+    END             reduce using rule 4 (expression -> expression SLASH expression .)
 
   ! PLUS            [ shift and go to state 20 ]
   ! MINUS           [ shift and go to state 21 ]
@@ -936,7 +1054,7 @@ state 33
   ! EQ              [ shift and go to state 26 ]
 
 
-state 34
+state 35
 
     (5) expression -> expression GREATER_THAN expression .
     (1) expression -> expression . PLUS expression
@@ -952,7 +1070,11 @@ state 34
     EQ              reduce using rule 5 (expression -> expression GREATER_THAN expression .)
     $end            reduce using rule 5 (expression -> expression GREATER_THAN expression .)
     RPAREN          reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    THEN            reduce using rule 5 (expression -> expression GREATER_THAN expression .)
     COMMA           reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    ELSEIF          reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    ELSE            reduce using rule 5 (expression -> expression GREATER_THAN expression .)
+    END             reduce using rule 5 (expression -> expression GREATER_THAN expression .)
     PLUS            shift and go to state 20
     MINUS           shift and go to state 21
     TIMES           shift and go to state 22
@@ -967,7 +1089,7 @@ state 34
   ! EQ              [ shift and go to state 26 ]
 
 
-state 35
+state 36
 
     (6) expression -> expression LESS_THAN expression .
     (1) expression -> expression . PLUS expression
@@ -983,7 +1105,11 @@ state 35
     EQ              reduce using rule 6 (expression -> expression LESS_THAN expression .)
     $end            reduce using rule 6 (expression -> expression LESS_THAN expression .)
     RPAREN          reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    THEN            reduce using rule 6 (expression -> expression LESS_THAN expression .)
     COMMA           reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    ELSEIF          reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    ELSE            reduce using rule 6 (expression -> expression LESS_THAN expression .)
+    END             reduce using rule 6 (expression -> expression LESS_THAN expression .)
     PLUS            shift and go to state 20
     MINUS           shift and go to state 21
     TIMES           shift and go to state 22
@@ -998,7 +1124,7 @@ state 35
   ! EQ              [ shift and go to state 26 ]
 
 
-state 36
+state 37
 
     (7) expression -> expression EQ expression .
     (1) expression -> expression . PLUS expression
@@ -1014,7 +1140,11 @@ state 36
     EQ              reduce using rule 7 (expression -> expression EQ expression .)
     $end            reduce using rule 7 (expression -> expression EQ expression .)
     RPAREN          reduce using rule 7 (expression -> expression EQ expression .)
+    THEN            reduce using rule 7 (expression -> expression EQ expression .)
     COMMA           reduce using rule 7 (expression -> expression EQ expression .)
+    ELSEIF          reduce using rule 7 (expression -> expression EQ expression .)
+    ELSE            reduce using rule 7 (expression -> expression EQ expression .)
+    END             reduce using rule 7 (expression -> expression EQ expression .)
     PLUS            shift and go to state 20
     MINUS           shift and go to state 21
     TIMES           shift and go to state 22
@@ -1029,7 +1159,7 @@ state 36
   ! EQ              [ shift and go to state 26 ]
 
 
-state 37
+state 38
 
     (8) expression -> LPAREN expression RPAREN .
 
@@ -1042,19 +1172,23 @@ state 37
     EQ              reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     $end            reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     RPAREN          reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    THEN            reduce using rule 8 (expression -> LPAREN expression RPAREN .)
     COMMA           reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    ELSEIF          reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    ELSE            reduce using rule 8 (expression -> LPAREN expression RPAREN .)
+    END             reduce using rule 8 (expression -> LPAREN expression RPAREN .)
 
 
-state 38
+state 39
 
     (12) expression -> FUNCTION_NAME LPAREN arg_list . RPAREN
     (27) arg_list -> arg_list . COMMA expression
 
-    RPAREN          shift and go to state 41
-    COMMA           shift and go to state 42
+    RPAREN          shift and go to state 43
+    COMMA           shift and go to state 44
 
 
-state 39
+state 40
 
     (26) arg_list -> expression .
     (1) expression -> expression . PLUS expression
@@ -1076,34 +1210,18 @@ state 39
     EQ              shift and go to state 26
 
 
-state 40
+state 41
 
     (13) expression -> IDENTIFIER LPAREN arg_list . RPAREN
     (27) arg_list -> arg_list . COMMA expression
 
-    RPAREN          shift and go to state 43
-    COMMA           shift and go to state 42
-
-
-state 41
-
-    (12) expression -> FUNCTION_NAME LPAREN arg_list RPAREN .
-
-    PLUS            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    MINUS           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    TIMES           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    SLASH           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    GREATER_THAN    reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    LESS_THAN       reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    EQ              reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    $end            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    RPAREN          reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
-    COMMA           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    RPAREN          shift and go to state 45
+    COMMA           shift and go to state 44
 
 
 state 42
 
-    (27) arg_list -> arg_list COMMA . expression
+    (28) expression -> IF expression THEN . expression if_expression_tail END
     (1) expression -> . expression PLUS expression
     (2) expression -> . expression MINUS expression
     (3) expression -> . expression TIMES expression
@@ -1117,6 +1235,7 @@ state 42
     (11) expression -> . NUMBER
     (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
     (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
     (14) FUNCTION_NAME -> . IF
     (15) FUNCTION_NAME -> . SUM
     (16) FUNCTION_NAME -> . SUBTRACT
@@ -1148,10 +1267,81 @@ state 42
     GTE             shift and go to state 18
     LTE             shift and go to state 19
 
-    expression                     shift and go to state 44
+    expression                     shift and go to state 46
     FUNCTION_NAME                  shift and go to state 6
 
 state 43
+
+    (12) expression -> FUNCTION_NAME LPAREN arg_list RPAREN .
+
+    PLUS            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    MINUS           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    TIMES           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    SLASH           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    GREATER_THAN    reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    LESS_THAN       reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    EQ              reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    $end            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    RPAREN          reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    THEN            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    COMMA           reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    ELSEIF          reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    ELSE            reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+    END             reduce using rule 12 (expression -> FUNCTION_NAME LPAREN arg_list RPAREN .)
+
+
+state 44
+
+    (27) arg_list -> arg_list COMMA . expression
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
+    (14) FUNCTION_NAME -> . IF
+    (15) FUNCTION_NAME -> . SUM
+    (16) FUNCTION_NAME -> . SUBTRACT
+    (17) FUNCTION_NAME -> . ADD
+    (18) FUNCTION_NAME -> . MULTIPLY
+    (19) FUNCTION_NAME -> . DIVIDE
+    (20) FUNCTION_NAME -> . AND
+    (21) FUNCTION_NAME -> . OR
+    (22) FUNCTION_NAME -> . GT
+    (23) FUNCTION_NAME -> . LT
+    (24) FUNCTION_NAME -> . GTE
+    (25) FUNCTION_NAME -> . LTE
+
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IDENTIFIER      shift and go to state 7
+    IF              shift and go to state 8
+    SUM             shift and go to state 9
+    SUBTRACT        shift and go to state 10
+    ADD             shift and go to state 11
+    MULTIPLY        shift and go to state 12
+    DIVIDE          shift and go to state 13
+    AND             shift and go to state 14
+    OR              shift and go to state 15
+    GT              shift and go to state 16
+    LT              shift and go to state 17
+    GTE             shift and go to state 18
+    LTE             shift and go to state 19
+
+    expression                     shift and go to state 47
+    FUNCTION_NAME                  shift and go to state 6
+
+state 45
 
     (13) expression -> IDENTIFIER LPAREN arg_list RPAREN .
 
@@ -1164,10 +1354,43 @@ state 43
     EQ              reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
     $end            reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
     RPAREN          reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
+    THEN            reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
     COMMA           reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
+    ELSEIF          reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
+    ELSE            reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
+    END             reduce using rule 13 (expression -> IDENTIFIER LPAREN arg_list RPAREN .)
 
 
-state 44
+state 46
+
+    (28) expression -> IF expression THEN expression . if_expression_tail END
+    (1) expression -> expression . PLUS expression
+    (2) expression -> expression . MINUS expression
+    (3) expression -> expression . TIMES expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
+    (7) expression -> expression . EQ expression
+    (29) if_expression_tail -> . ELSEIF expression THEN expression if_expression_tail
+    (30) if_expression_tail -> . ELSE expression
+    (31) if_expression_tail -> . empty
+    (32) empty -> .
+
+    PLUS            shift and go to state 20
+    MINUS           shift and go to state 21
+    TIMES           shift and go to state 22
+    SLASH           shift and go to state 23
+    GREATER_THAN    shift and go to state 24
+    LESS_THAN       shift and go to state 25
+    EQ              shift and go to state 26
+    ELSEIF          shift and go to state 49
+    ELSE            shift and go to state 50
+    END             reduce using rule 32 (empty -> .)
+
+    if_expression_tail             shift and go to state 48
+    empty                          shift and go to state 51
+
+state 47
 
     (27) arg_list -> arg_list COMMA expression .
     (1) expression -> expression . PLUS expression
@@ -1187,4 +1410,269 @@ state 44
     GREATER_THAN    shift and go to state 24
     LESS_THAN       shift and go to state 25
     EQ              shift and go to state 26
+
+
+state 48
+
+    (28) expression -> IF expression THEN expression if_expression_tail . END
+
+    END             shift and go to state 52
+
+
+state 49
+
+    (29) if_expression_tail -> ELSEIF . expression THEN expression if_expression_tail
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
+    (14) FUNCTION_NAME -> . IF
+    (15) FUNCTION_NAME -> . SUM
+    (16) FUNCTION_NAME -> . SUBTRACT
+    (17) FUNCTION_NAME -> . ADD
+    (18) FUNCTION_NAME -> . MULTIPLY
+    (19) FUNCTION_NAME -> . DIVIDE
+    (20) FUNCTION_NAME -> . AND
+    (21) FUNCTION_NAME -> . OR
+    (22) FUNCTION_NAME -> . GT
+    (23) FUNCTION_NAME -> . LT
+    (24) FUNCTION_NAME -> . GTE
+    (25) FUNCTION_NAME -> . LTE
+
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IDENTIFIER      shift and go to state 7
+    IF              shift and go to state 8
+    SUM             shift and go to state 9
+    SUBTRACT        shift and go to state 10
+    ADD             shift and go to state 11
+    MULTIPLY        shift and go to state 12
+    DIVIDE          shift and go to state 13
+    AND             shift and go to state 14
+    OR              shift and go to state 15
+    GT              shift and go to state 16
+    LT              shift and go to state 17
+    GTE             shift and go to state 18
+    LTE             shift and go to state 19
+
+    expression                     shift and go to state 53
+    FUNCTION_NAME                  shift and go to state 6
+
+state 50
+
+    (30) if_expression_tail -> ELSE . expression
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
+    (14) FUNCTION_NAME -> . IF
+    (15) FUNCTION_NAME -> . SUM
+    (16) FUNCTION_NAME -> . SUBTRACT
+    (17) FUNCTION_NAME -> . ADD
+    (18) FUNCTION_NAME -> . MULTIPLY
+    (19) FUNCTION_NAME -> . DIVIDE
+    (20) FUNCTION_NAME -> . AND
+    (21) FUNCTION_NAME -> . OR
+    (22) FUNCTION_NAME -> . GT
+    (23) FUNCTION_NAME -> . LT
+    (24) FUNCTION_NAME -> . GTE
+    (25) FUNCTION_NAME -> . LTE
+
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IDENTIFIER      shift and go to state 7
+    IF              shift and go to state 8
+    SUM             shift and go to state 9
+    SUBTRACT        shift and go to state 10
+    ADD             shift and go to state 11
+    MULTIPLY        shift and go to state 12
+    DIVIDE          shift and go to state 13
+    AND             shift and go to state 14
+    OR              shift and go to state 15
+    GT              shift and go to state 16
+    LT              shift and go to state 17
+    GTE             shift and go to state 18
+    LTE             shift and go to state 19
+
+    expression                     shift and go to state 54
+    FUNCTION_NAME                  shift and go to state 6
+
+state 51
+
+    (31) if_expression_tail -> empty .
+
+    END             reduce using rule 31 (if_expression_tail -> empty .)
+
+
+state 52
+
+    (28) expression -> IF expression THEN expression if_expression_tail END .
+
+    PLUS            reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    MINUS           reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    TIMES           reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    SLASH           reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    GREATER_THAN    reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    LESS_THAN       reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    EQ              reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    $end            reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    RPAREN          reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    THEN            reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    COMMA           reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    ELSEIF          reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    ELSE            reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+    END             reduce using rule 28 (expression -> IF expression THEN expression if_expression_tail END .)
+
+
+state 53
+
+    (29) if_expression_tail -> ELSEIF expression . THEN expression if_expression_tail
+    (1) expression -> expression . PLUS expression
+    (2) expression -> expression . MINUS expression
+    (3) expression -> expression . TIMES expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
+    (7) expression -> expression . EQ expression
+
+    THEN            shift and go to state 55
+    PLUS            shift and go to state 20
+    MINUS           shift and go to state 21
+    TIMES           shift and go to state 22
+    SLASH           shift and go to state 23
+    GREATER_THAN    shift and go to state 24
+    LESS_THAN       shift and go to state 25
+    EQ              shift and go to state 26
+
+
+state 54
+
+    (30) if_expression_tail -> ELSE expression .
+    (1) expression -> expression . PLUS expression
+    (2) expression -> expression . MINUS expression
+    (3) expression -> expression . TIMES expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
+    (7) expression -> expression . EQ expression
+
+    END             reduce using rule 30 (if_expression_tail -> ELSE expression .)
+    PLUS            shift and go to state 20
+    MINUS           shift and go to state 21
+    TIMES           shift and go to state 22
+    SLASH           shift and go to state 23
+    GREATER_THAN    shift and go to state 24
+    LESS_THAN       shift and go to state 25
+    EQ              shift and go to state 26
+
+
+state 55
+
+    (29) if_expression_tail -> ELSEIF expression THEN . expression if_expression_tail
+    (1) expression -> . expression PLUS expression
+    (2) expression -> . expression MINUS expression
+    (3) expression -> . expression TIMES expression
+    (4) expression -> . expression SLASH expression
+    (5) expression -> . expression GREATER_THAN expression
+    (6) expression -> . expression LESS_THAN expression
+    (7) expression -> . expression EQ expression
+    (8) expression -> . LPAREN expression RPAREN
+    (9) expression -> . COLUMN
+    (10) expression -> . STRING
+    (11) expression -> . NUMBER
+    (12) expression -> . FUNCTION_NAME LPAREN arg_list RPAREN
+    (13) expression -> . IDENTIFIER LPAREN arg_list RPAREN
+    (28) expression -> . IF expression THEN expression if_expression_tail END
+    (14) FUNCTION_NAME -> . IF
+    (15) FUNCTION_NAME -> . SUM
+    (16) FUNCTION_NAME -> . SUBTRACT
+    (17) FUNCTION_NAME -> . ADD
+    (18) FUNCTION_NAME -> . MULTIPLY
+    (19) FUNCTION_NAME -> . DIVIDE
+    (20) FUNCTION_NAME -> . AND
+    (21) FUNCTION_NAME -> . OR
+    (22) FUNCTION_NAME -> . GT
+    (23) FUNCTION_NAME -> . LT
+    (24) FUNCTION_NAME -> . GTE
+    (25) FUNCTION_NAME -> . LTE
+
+    LPAREN          shift and go to state 2
+    COLUMN          shift and go to state 3
+    STRING          shift and go to state 4
+    NUMBER          shift and go to state 5
+    IDENTIFIER      shift and go to state 7
+    IF              shift and go to state 8
+    SUM             shift and go to state 9
+    SUBTRACT        shift and go to state 10
+    ADD             shift and go to state 11
+    MULTIPLY        shift and go to state 12
+    DIVIDE          shift and go to state 13
+    AND             shift and go to state 14
+    OR              shift and go to state 15
+    GT              shift and go to state 16
+    LT              shift and go to state 17
+    GTE             shift and go to state 18
+    LTE             shift and go to state 19
+
+    expression                     shift and go to state 56
+    FUNCTION_NAME                  shift and go to state 6
+
+state 56
+
+    (29) if_expression_tail -> ELSEIF expression THEN expression . if_expression_tail
+    (1) expression -> expression . PLUS expression
+    (2) expression -> expression . MINUS expression
+    (3) expression -> expression . TIMES expression
+    (4) expression -> expression . SLASH expression
+    (5) expression -> expression . GREATER_THAN expression
+    (6) expression -> expression . LESS_THAN expression
+    (7) expression -> expression . EQ expression
+    (29) if_expression_tail -> . ELSEIF expression THEN expression if_expression_tail
+    (30) if_expression_tail -> . ELSE expression
+    (31) if_expression_tail -> . empty
+    (32) empty -> .
+
+    PLUS            shift and go to state 20
+    MINUS           shift and go to state 21
+    TIMES           shift and go to state 22
+    SLASH           shift and go to state 23
+    GREATER_THAN    shift and go to state 24
+    LESS_THAN       shift and go to state 25
+    EQ              shift and go to state 26
+    ELSEIF          shift and go to state 49
+    ELSE            shift and go to state 50
+    END             reduce using rule 32 (empty -> .)
+
+    if_expression_tail             shift and go to state 57
+    empty                          shift and go to state 51
+
+state 57
+
+    (29) if_expression_tail -> ELSEIF expression THEN expression if_expression_tail .
+
+    END             reduce using rule 29 (if_expression_tail -> ELSEIF expression THEN expression if_expression_tail .)
 
