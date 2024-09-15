@@ -105,3 +105,47 @@ def test_and_condition(csv_file):
 
     actual_values = result[0].to_pydict()['and']
     assert actual_values == expected_values, f"Expected {expected_values}, got {actual_values}"
+
+
+def test_if_condition(csv_file):
+    """Test the IF function with a simple condition."""
+    input_expr = 'IF(GT("salary", 6000), \'High\', \'Low\')'
+    expected_values = ["Low", "Low", "High"]  # Salaries are 5000, 6000, 7000
+
+    ast = run_parser(input_expr)
+    print(f"Parsed AST for {input_expr}: {ast}")
+
+    if ast is None:
+        raise ValueError(f"Parser failed for input: {input_expr}")
+
+    expr_and_aggregate_flag = ast_to_datafusion_expr(ast)
+    expr, is_aggregate = expr_and_aggregate_flag
+    print(f"Generated DataFusion Expression: {expr}")
+    print(f"Is Aggregate: {is_aggregate}")
+
+    result = execute_datafusion_expr(expr_and_aggregate_flag, csv_file)
+    print(f"Execution Result: {result}")
+
+    actual_values = result[0].to_pydict()['if']
+    assert actual_values == expected_values, f"Expected {expected_values}, got {actual_values}"
+def test_nested_if_condition(csv_file):
+    """Test nested IF functions with GTE."""
+    input_expr = 'IF(GT("salary", 6500), \'Very High\', IF(GTE("salary", 6000), \'High\', \'Low\'))'
+    expected_values = ["Low", "High", "Very High"]  # Salaries are 5000, 6000, 7000
+
+    ast = run_parser(input_expr)
+    print(f"Parsed AST for {input_expr}: {ast}")
+
+    if ast is None:
+        raise ValueError(f"Parser failed for input: {input_expr}")
+
+    expr_and_aggregate_flag = ast_to_datafusion_expr(ast)
+    expr, is_aggregate = expr_and_aggregate_flag
+    print(f"Generated DataFusion Expression: {expr}")
+    print(f"Is Aggregate: {is_aggregate}")
+
+    result = execute_datafusion_expr(expr_and_aggregate_flag, csv_file)
+    print(f"Execution Result: {result}")
+
+    actual_values = result[0].to_pydict()['if']
+    assert actual_values == expected_values, f"Expected {expected_values}, got {actual_values}"

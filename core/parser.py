@@ -1,5 +1,4 @@
 # core/parser.py
-
 import ply.yacc as yacc
 from core.lexer import tokens
 
@@ -11,9 +10,10 @@ precedence = (
     ('left', 'PLUS', 'MINUS'),
     ('left', 'TIMES', 'SLASH'),
 )
+
 # Grammar rules
 
-## Expression parsing
+# Expression parsing
 def p_expression_binop(p):
     '''expression : expression PLUS expression
                   | expression MINUS expression
@@ -24,17 +24,20 @@ def p_expression_binop(p):
                   | expression EQ expression'''
     p[0] = ('binop', p[2], p[1], p[3])
 
-
 # Parentheses
 def p_expression_group(p):
     'expression : LPAREN expression RPAREN'
     p[0] = p[2]
 
-# Column references or strings
+# Column references
 def p_expression_column(p):
-    '''expression : COLUMN
-                  | STRING'''
+    'expression : COLUMN'
     p[0] = ('column', p[1])
+
+# String literals
+def p_expression_string(p):
+    'expression : STRING'
+    p[0] = ('string', p[1])
 
 # Numbers
 def p_expression_number(p):
@@ -43,7 +46,8 @@ def p_expression_number(p):
 
 # Function handling
 def p_expression_function(p):
-    '''expression : FUNCTION_NAME LPAREN arg_list RPAREN'''
+    '''expression : FUNCTION_NAME LPAREN arg_list RPAREN
+                  | IDENTIFIER LPAREN arg_list RPAREN'''
     p[0] = (p[1].lower(), p[3])
 
 def p_FUNCTION_NAME(p):
@@ -56,7 +60,9 @@ def p_FUNCTION_NAME(p):
                      | AND
                      | OR
                      | GT
-                     | LT'''
+                     | LT
+                     | GTE
+                     | LTE'''
     p[0] = p[1]
 
 def p_arg_list(p):
