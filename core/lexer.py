@@ -5,6 +5,10 @@ import ply.lex as lex
 # Define reserved words
 reserved = {
     'IF': 'IF',
+    'THEN': 'THEN',
+    'ELSE': 'ELSE',
+    'END': 'END',
+    'ELSEIF': 'ELSEIF', 
     'SUM': 'SUM',
     'SUBTRACT': 'SUBTRACT',
     'ADD': 'ADD',
@@ -14,6 +18,8 @@ reserved = {
     'OR': 'OR',
     'GT': 'GT',
     'LT': 'LT',
+    'GTE': 'GTE',  # Added
+    'LTE': 'LTE',  # You might want to add this as well
     # Add other function names as needed
 }
 
@@ -21,8 +27,8 @@ reserved = {
 tokens = (
     'NUMBER', 'PLUS', 'MINUS', 'TIMES', 'SLASH',
     'LPAREN', 'RPAREN', 'COLUMN', 'GREATER_THAN', 'LESS_THAN', 'EQ',
-    'COMMA', 'STRING',
-) + tuple(reserved.values()) 
+    'COMMA', 'STRING', 'IDENTIFIER',
+) + tuple(reserved.values())
 
 # Define simple tokens
 t_PLUS = r'\+'
@@ -36,16 +42,22 @@ t_LESS_THAN = r'<'
 t_EQ = r'=='
 t_COMMA = r','
 
-# Handle column names and reserved words
-def t_COLUMN(t):
-    r'[A-Za-z_][A-Za-z0-9_]*'
-    t.type = reserved.get(t.value.upper(), 'COLUMN')  # Check for reserved words
+# Handle string literals (single-quoted strings)
+def t_STRING(t):
+    r'\'(.*?)\''
+    t.value = t.value.strip("'")  # Remove the surrounding single quotes
     return t
 
-# Handle string literals (e.g., "salary", "tax")
-def t_STRING(t):
-    r'\".*?\"'
-    t.value = t.value.strip('"')  # Remove the surrounding quotes
+# Handle column names (double-quoted strings)
+def t_COLUMN(t):
+    r'\"(.*?)\"'
+    t.value = t.value.strip('"')  # Remove the surrounding double quotes
+    return t
+
+# Handle identifiers and reserved words
+def t_IDENTIFIER(t):
+    r'[A-Za-z_][A-Za-z0-9_]*'
+    t.type = reserved.get(t.value.upper(), 'IDENTIFIER')  # Check for reserved words
     return t
 
 # Handle number literals

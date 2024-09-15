@@ -21,29 +21,12 @@ def run_parser(input_string):
     result = parser.parse(input_string)
     return result
 
-def execute_datafusion_expr(expr_and_aggregate_flag, csv_path):
-    """Execute a DataFusion expression on a CSV file and return the result."""
-    expr, is_aggregate = expr_and_aggregate_flag
+def execute_datafusion_expr(expr_and_aggregate_flag, csv_file):
+    """Execute the DataFusion expression on the CSV file"""
     ctx = SessionContext()
-
-    # Register the CSV file as a table
-    ctx.register_csv("table", csv_path)
-
-    # Build the query with the DataFusion expression
-    df = ctx.table("table")
-
-    if is_aggregate:
-        # Use aggregate method
-        df_result = df.aggregate([], [expr])
-    else:
-        # Use select method
-        df_result = df.select(expr)
-
-    # Collect the result and catch errors
-    try:
-        result = df_result.collect()
-        print("DataFusion Result:", result)
-        return result
-    except Exception as e:
-        print(f"DataFusion Execution Failed: {e}")
-        raise
+    df = ctx.read_csv(csv_file)  # Read the CSV into a DataFrame
+    expr, _ = expr_and_aggregate_flag
+    
+    # Apply the expression to the DataFrame
+    result_df = df.select(expr)  # Execute the expression
+    return result_df.collect()  # Return the result for verification

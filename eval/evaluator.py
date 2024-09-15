@@ -1,55 +1,67 @@
 # eval/evaluator.py
 
-from datafusion import functions as f, col, literal
+from datafusion import functions as f, col, lit
+from datafusion.functions import case
 from functools import reduce
+from exceptions.custom_exceptions import (
+    DataTypeMismatchError,
+    ColumnNotFoundError,
+    InvalidOperationError,
+)
 
-# Function registry mapping function names to (function, is_aggregate) tuples
+# Function registry mapping function names to functions and is_aggregate flag
 FUNCTION_REGISTRY = {
-    'sum': (lambda args: f.sum(args[0]).alias('sum'), True),
-    'subtract': (lambda args: (args[0] - args[1]).alias('subtract'), False),
-    'add': (lambda args: (args[0] + args[1]).alias('add'), False),
-    'multiply': (lambda args: (args[0] * args[1]).alias('multiply'), False),
-    'divide': (lambda args: (args[0] / args[1]).alias('divide'), False),
-    'if': (lambda args: f.when(args[0], args[1]).otherwise(args[2]).alias('if'), False),
-    'and': (lambda args: reduce(lambda x, y: x & y, args).alias('and'), False),
-    'gt': (lambda args: (args[0] > args[1]), False),
-    'lt': (lambda args: (args[0] < args[1]), False),
+    'sum': (lambda arg: f.sum(arg).alias('sum'), True),
+    'subtract': (lambda left, right: (left - right).alias('subtract'), False),
+    'add': (lambda left, right: (left + right).alias('add'), False),
+    'multiply': (lambda left, right: (left * right).alias('multiply'), False),
+    'divide': (lambda left, right: (left / right).alias('divide'), False),
+    'if': (lambda condition, true_expr, false_expr: case(condition)
+           .when(lit(True), true_expr)
+           .otherwise(false_expr)
+           .alias('if'), False),
+    'and': (lambda *conditions: reduce(lambda x, y: x & y, conditions).alias('and'), False),
+    'gt': (lambda left, right: (left > right).alias('gt'), False),
+    'gte': (lambda left, right: (left >= right).alias('gte'), False),
+    'lt': (lambda left, right: (left < right).alias('lt'), False),
+    'lte': (lambda left, right: (left <= right).alias('lte'), False),
     # Add other functions as needed
 }
 
-def ast_to_datafusion_expr(ast):
-    """
-    Convert the parsed AST into a DataFusion expression.
-    This function recursively handles nested expressions.
-    Returns a tuple: (expression, is_aggregate)
-    """
+def ast_to_datafusion_expr(ast, df_schema=None):
+    """Convert AST to DataFusion expression."""
     if isinstance(ast, int):
-        return literal(ast), False  # Literal number is not an aggregate
+        return lit(ast), False  # Literal number is not an aggregate
 
     if isinstance(ast, str):
-        return literal(ast), False  # Literal string is not an aggregate
+        return lit(ast), False  # Literal string is not an aggregate
 
-    node_type = ast[0]
+    if isinstance(ast, tuple):
+        node_type = ast[0]
 
-    if node_type == 'column':
-        # Return a column expression
-        column_name = ast[1]
-        return col(column_name), False  # Column reference is not an aggregate
+        if node_type == 'column':
+            column_name = ast[1]
+            if df_schema and column_name not in df_schema:
+                raise ColumnNotFoundError(column_name)
+            return col(column_name), False  # Column reference is not an aggregate
 
-    elif node_type in FUNCTION_REGISTRY:
-        # Recursively resolve the arguments to handle nested functions
-        args = []
-        is_aggregate = False
-        for arg in ast[1]:
-            expr, agg = ast_to_datafusion_expr(arg)
-            args.append(expr)
-            if agg:
-                is_aggregate = True  # If any argument is an aggregate, set is_aggregate to True
+        elif node_type == 'string':
+            return lit(ast[1]), False  # String literal
 
-        func, func_is_aggregate = FUNCTION_REGISTRY[node_type]
-        expr = func(args)
-        # The expression is aggregate if the function is aggregate
-        is_aggregate = func_is_aggregate or is_aggregate
-        return expr, is_aggregate
+        elif node_type in FUNCTION_REGISTRY:
+            args = []
+            is_aggregate = False
+            for arg in ast[1]:
+                expr, agg = ast_to_datafusion_expr(arg, df_schema)
+                args.append(expr)
+                if agg:
+                    is_aggregate = True
+
+            func, func_is_aggregate = FUNCTION_REGISTRY[node_type]
+            expr = func(*args)  # Unpack args when calling the function
+            is_aggregate = func_is_aggregate or is_aggregate
+            return expr, is_aggregate
+        else:
+            raise InvalidOperationError(node_type, "Unknown AST node type")
     else:
-        raise ValueError(f"Unknown AST node {node_type}")
+        raise InvalidOperationError(str(ast), "Invalid AST node")
