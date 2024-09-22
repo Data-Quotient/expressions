@@ -25,8 +25,13 @@ def execute_datafusion_expr(expr_and_aggregate_flag, csv_file):
     """Execute the DataFusion expression on the CSV file"""
     ctx = SessionContext()
     df = ctx.read_csv(csv_file)  # Read the CSV into a DataFrame
-    expr, _ = expr_and_aggregate_flag
+    expr, is_aggregate = expr_and_aggregate_flag
     
-    # Apply the expression to the DataFrame
-    result_df = df.select(expr)  # Execute the expression
-    return result_df.collect()  # Return the result for verification
+    if is_aggregate:
+        # Aggregate expressions should be used with the `aggregate` function
+        result_df = df.aggregate([], [expr])
+    else:
+        # Regular expressions should be used with `select`
+        result_df = df.select(expr)
+        
+    return result_df.collect()  # Return the result for verification 
